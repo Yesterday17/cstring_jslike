@@ -12,6 +12,7 @@ int main() {
   printf("str1 + space + str2 is: %s\n", str3->c_str);
 
   printf("str1.charAt(2) is: %c\n", charAt(str1, 2));
+  printf("str1.charCodeAt(2) is: %d\n", charCodeAt(str1, 2));
 
   return 0;
 }

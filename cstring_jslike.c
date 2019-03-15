@@ -48,6 +48,20 @@ char charAt(string str, int index) {
   }
 }
 
+/**
+ * The charCodeAt() method returns an integer between 0 and 65535 representing the ASCII code unit at the given index.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charCodeAt
+ * @param str
+ * @param index
+ * @return
+ */
+// TODO: Implement UTF-16 code unit.
+int charCodeAt(string str, int index) {
+  return charAt(str, index);
+}
+
+// TODO: charPointAt
+
 string concat2(string a, string b) {
   string ans = newSizedString(a->length + b->length);
   memcpy(ans->c_str, a->c_str, a->length);

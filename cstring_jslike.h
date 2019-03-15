@@ -28,6 +28,7 @@ string freeAssign(string* dest, string src);
 
 string fromCharCode(uint64_t count, ...);
 char charAt(string str, int index);
+int charCodeAt(string str, int index);
 string concat(uint64_t count, ...);
 string concat2(string a, string b);
 
