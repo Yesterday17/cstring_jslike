@@ -4,13 +4,17 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #ifndef CSTRING_JSLIKE_CSTRING_JSLIKE_H
 #define CSTRING_JSLIKE_CSTRING_JSLIKE_H
 
 #define $init$ = newEmptyString()
-#define LITERAL(c) newLiteralString(c, (String*) alloca(sizeof(string)))
+#ifndef _WIN32
+#define LITERAL(c) newLiteralString(c, (String*) alloca(sizeof(String)))
+#else
+#define LITERAL(c) newLiteralString(c, (String*) _alloca(sizeof(String)))
+#endif
 
 typedef struct String {
   uint64_t length;
@@ -39,5 +43,8 @@ string charAtU(string str, uint64_t index);
 string concat2(string a, string b);
 bool endsWithT(string src, string search);
 size_t length(string src);
+
+// Encoding
+char *stringToGBK(string str);
 
 #endif //CSTRING_JSLIKE_CSTRING_JSLIKE_H

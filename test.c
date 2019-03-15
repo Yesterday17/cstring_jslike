@@ -38,5 +38,9 @@ int main() {
   printf("length('%s') is: %llu\n", str5->c_str, length(str5));
   printf("\n");
 
+  // String To GBK
+  printf("str4 in GBK is: %s\n", stringToGBK(str4));
+  printf("\n");
+
   return 0;
 }

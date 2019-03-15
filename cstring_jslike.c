@@ -5,6 +5,12 @@
 #include <stdarg.h>
 #include <string.h>
 
+#ifndef _WIN32
+#include <iconv.h>
+#else
+#include <windows.h>
+#endif
+
 #define STRING_START_SIZE 16
 
 /**
@@ -133,7 +139,7 @@ string charAtU(string str, uint64_t index) {
       result->c_str[j] = str->c_str[i];
     }
     result->c_str[j] = '\0';
-    str->length = size;
+    result->length = size;
   }
 
   return result;
@@ -259,3 +265,40 @@ string freeAssign(string *dest, string src) {
   *dest = src;
   return *dest;
 }
+
+#ifndef _WIN32
+char *stringToGBK(string str) {
+  char *result = (char *) malloc(sizeof(char) * str->length), *out_buf = result;
+  memset(result, 0, str->length);
+
+  size_t in_len = str->length, out_len = str->length;
+  char *in_buf = str->c_str;
+
+  iconv_t cd = iconv_open("GBK", "UTF-8");
+  if (cd != (iconv_t) - 1) {
+    if (iconv(cd, &in_buf, &in_len, &out_buf, &out_len) == 0) {
+      iconv_close(cd);
+    }
+  }
+  return result;
+}
+#else
+char *stringToGBK(string str) {
+  char *src = str->c_str, *result = (char *) malloc(sizeof(char) * str->length);
+
+  WCHAR *w_str;
+  int i = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
+  if (i > 0) {
+    w_str = (WCHAR *) malloc((size_t) i * 2);
+    MultiByteToWideChar(CP_UTF8, 0, src, -1, w_str, i);
+    i = WideCharToMultiByte(CP_ACP, 0, w_str, -1, NULL, 0, NULL, NULL);
+    if (str->length >= i) {
+      WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
+      result[i] = 0;
+    }
+    free(w_str);
+  }
+
+  return result;
+}
+#endif
