@@ -231,6 +231,23 @@ string newString(char *c) {
 }
 
 /**
+ * Initialize a literal string from c_str
+ *
+ * <b>Please do not call this function directly</b>
+ * @param c The c_str
+ * @param mem memory allocated on stack
+ * @return
+ */
+string newLiteralString(char *c, void * mem) {
+  string str = (String *) mem;
+
+  str->length = strlen(c);
+  str->size = str->length;
+  str->c_str = c;
+  return str;
+}
+
+/**
  * Delete a string.
  * @param str The string
  */

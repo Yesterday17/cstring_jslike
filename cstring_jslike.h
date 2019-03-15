@@ -4,13 +4,14 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #ifndef CSTRING_JSLIKE_CSTRING_JSLIKE_H
 #define CSTRING_JSLIKE_CSTRING_JSLIKE_H
 
 #define $init$ = newEmptyString()
 #define STRING(c) newString(c)
-// FIXME: Sting literal causing memory leak.
+#define LITERAL(c) newLiteralString(c, alloca(sizeof(String)))
 
 typedef struct String {
   uint64_t length;
@@ -22,6 +23,7 @@ typedef String *string;
 string newEmptyString();
 string newSizedString(uint64_t size);
 string newString(char *c);
+string newLiteralString(char *c, void * mem);
 
 void deleteString(string str);
 string freeAssign(string *dest, string src);
