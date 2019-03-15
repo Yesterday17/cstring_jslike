@@ -32,6 +32,22 @@ string fromCharCode(uint64_t count, ...) {
   return str;
 }
 
+/**
+ * The String's charAt() method returns a char consisting of the single ASCII code unit located at the specified offset into the string.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charAt
+ * @param str
+ * @param index
+ * @return A character at index, or 0 on error.
+ */
+// TODO: Implement UTF-16 code unit.
+char charAt(string str, int index) {
+  if (index >= 0 && index <= str->length - 1) {
+    return str->c_str[index];
+  } else {
+    return 0;
+  }
+}
+
 string concat2(string a, string b) {
   string ans = newSizedString(a->length + b->length);
   memcpy(ans->c_str, a->c_str, a->length);
@@ -115,9 +131,12 @@ string newSizedString(uint64_t size) {
  */
 string newString(char *c) {
   string str = (String *) malloc(sizeof(String));
-  strcpy(str->c_str, c);
-  str->length = strlen(str->c_str);
+
+  str->length = strlen(c);
   str->size = str->length;
+
+  str->c_str = (char *) malloc(sizeof(char) * (str->length + 1));
+  strcpy(str->c_str, c);
   return str;
 }
 
