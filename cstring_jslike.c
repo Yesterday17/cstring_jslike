@@ -5,7 +5,6 @@
 #include <malloc.h>
 #include <stdarg.h>
 #include <string.h>
-#include <stdbool.h>
 
 #define STRING_START_SIZE 16
 
@@ -40,7 +39,7 @@ string fromCharCode(uint64_t count, ...) {
  * @return A character at index, or 0 on error.
  */
 // TODO: Implement UTF-16 code unit.
-char charAt(string str, int index) {
+char charAt(string str, uint64_t index) {
   if (index >= 0 && index <= str->length - 1) {
     return str->c_str[index];
   } else {
@@ -56,21 +55,19 @@ char charAt(string str, int index) {
  * @return
  */
 // TODO: Implement UTF-16 code unit.
-int charCodeAt(string str, int index) {
+int charCodeAt(string str, uint64_t index) {
   return charAt(str, index);
 }
 
 // TODO: charPointAt
 
-string concat2(string a, string b) {
-  string ans = newSizedString(a->length + b->length);
-  memcpy(ans->c_str, a->c_str, a->length);
-  memcpy(ans->c_str + a->length, b->c_str, b->length);
-
-  ans->length = a->length + b->length;
-  return ans;
-}
-
+/**
+ * The concat() method concatenates the string arguments to the calling string and returns a new string.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/concat
+ * @param count The number of strings to concat.
+ * @param ... The strings to concat.
+ * @return A new string.
+ */
 string concat(uint64_t count, ...) {
   string str = newEmptyString();
   uint64_t length = 0;
@@ -86,6 +83,42 @@ string concat(uint64_t count, ...) {
 
   str->length = length;
   return str;
+}
+
+/**
+ * The endsWith() method determines whether a string ends with the characters of a specified string, returning true or false as appropriate.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+ * @param src
+ * @param search
+ * @param length
+ * @return
+ */
+bool endsWith(string src, string search, uint64_t length) {
+  bool match = true;
+  if (src->length < length) {
+    length = src->length;
+  }
+
+  for (int i = 0; i < search->length; i++) {
+    if (charAt(src, length - 1 - i) != charAt(search, search->length - 1 - i)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool endsWithT(string src, string search) {
+  return endsWith(src, search, src->length);
+}
+
+string concat2(string a, string b) {
+  string ans = newSizedString(a->length + b->length);
+  memcpy(ans->c_str, a->c_str, a->length);
+  memcpy(ans->c_str + a->length, b->c_str, b->length);
+
+  ans->length = a->length + b->length;
+  return ans;
 }
 
 /**
