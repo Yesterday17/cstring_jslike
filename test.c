@@ -2,7 +2,7 @@
 #include "cstring_jslike.h"
 
 int main() {
-  string str1 = charCodeAt(3, 65, 66, 67);
+  string str1 = fromCharCode(3, 65, 66, 67);
   printf("%s\n", str1->c_str);
 
   string str2 = concat2(str1, STRING("2333"));

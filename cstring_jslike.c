@@ -9,7 +9,15 @@
 
 #define STRING_START_SIZE 16
 
-string charCodeAt(uint64_t count, ...) {
+/**
+ * The fromCharCode() method returns a string created from the specified sequence of ASCII code units.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode
+ * @param count The number of units.
+ * @param ... Units.
+ * @return A string contains the units.
+ */
+// TODO: Implement UTF-16 code units.
+string fromCharCode(uint64_t count, ...) {
   string str = newSizedString(count);
 
   va_list args;
@@ -123,7 +131,7 @@ void deleteString(string str) {
  * @param src The string to be assigned.
  * @return (Optional) The string assigned.
  */
-string freeAssign(string* dest, string src) {
+string freeAssign(string *dest, string src) {
   deleteString(*dest);
   *dest = src;
   return *dest;

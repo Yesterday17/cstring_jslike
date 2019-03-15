@@ -25,7 +25,7 @@ string newString(char *c);
 void deleteString(string str);
 string freeAssign(string* dest, string src);
 
-string charCodeAt(uint64_t count, ...);
+string fromCharCode(uint64_t count, ...);
 string concat(uint64_t count, ...);
 string concat2(string a, string b);
 
