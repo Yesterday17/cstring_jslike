@@ -1,5 +1,5 @@
 //
-// Created by t on 3/15.
+// Created by Yesterday17 on 3/15.
 //
 #include "cstring_jslike.h"
 #include <malloc.h>
@@ -108,8 +108,33 @@ bool endsWith(string src, string search, uint64_t length) {
   return true;
 }
 
-bool endsWithT(string src, string search) {
-  return endsWith(src, search, src->length);
+/**
+ * The String's charAtU() method returns a string consisting of the UTF-8 code unit located at the specified offset into the UTF-8 string.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charAt
+ * @param str
+ * @param index
+ * @return A character at index, or 0 on error.
+ */
+string charAtU(string str, uint64_t index) {
+  string result = newSizedString(5);
+  uint64_t size = 1;
+  if (index >= 0 && index < length(str)) {
+    int i, j;
+    for (i = 0; i <= index; i++) {
+      unsigned char c = (unsigned char) str->c_str[i];
+      if (c >= 0 && c <= 127) i += 0, size = 1;
+      else if ((c & 0xE0) == 0xC0) i += 1, size = 2;
+      else if ((c & 0xF0) == 0xE0) i += 2, size = 3;
+      else if ((c & 0xF8) == 0xF0) i += 3, size = 4;
+    }
+    for (j = 0; j < size; i++, j++) {
+      result->c_str[j] = str->c_str[i];
+    }
+    result->c_str[j] = '\0';
+    str->length = size;
+  }
+
+  return result;
 }
 
 string concat2(string a, string b) {
@@ -121,10 +146,14 @@ string concat2(string a, string b) {
   return ans;
 }
 
+bool endsWithT(string src, string search) {
+  return endsWith(src, search, src->length);
+}
+
 size_t length(string src) {
   size_t size = 0;
   for (int i = 0; i < src->length; i++) {
-    char c = (unsigned char) src->c_str[i];
+    unsigned char c = (unsigned char) src->c_str[i];
     if (c >= 0 && c <= 127) i += 0;
     else if ((c & 0xE0) == 0xC0) i += 1;
     else if ((c & 0xF0) == 0xE0) i += 2;

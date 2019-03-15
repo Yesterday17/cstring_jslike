@@ -1,5 +1,5 @@
 //
-// Created by t on 3/15.
+// Created by Yesterday17 on 3/15.
 //
 
 #include <stdint.h>
@@ -34,6 +34,7 @@ string concat(uint64_t count, ...);
 bool endsWith(string src, string search, uint64_t length);
 
 // Help methods
+string charAtU(string str, uint64_t index);
 string concat2(string a, string b);
 bool endsWithT(string src, string search);
 size_t length(string src);
