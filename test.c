@@ -23,5 +23,9 @@ int main() {
   printf("str1.endWith('B', 2) is: %s\n", endsWith(str1, STRING("B"), 2) ? "true" : "false");
   printf("\n");
 
+  string str4 = STRING(u8"霹雳霹雳🍻");
+  printf("length('%s') is: %llu\n", str4->c_str, length(str4));
+  printf("\n");
+
   return 0;
 }

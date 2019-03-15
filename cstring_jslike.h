@@ -36,5 +36,6 @@ bool endsWith(string src, string search, uint64_t length);
 // Help methods
 string concat2(string a, string b);
 bool endsWithT(string src, string search);
+size_t length(string src);
 
 #endif //CSTRING_JSLIKE_CSTRING_JSLIKE_H
