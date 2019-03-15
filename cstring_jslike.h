@@ -4,26 +4,25 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdlib.h>
+#include <malloc.h>
 
 #ifndef CSTRING_JSLIKE_CSTRING_JSLIKE_H
 #define CSTRING_JSLIKE_CSTRING_JSLIKE_H
 
 #define $init$ = newEmptyString()
-#define STRING(c) newString(c)
-#define LITERAL(c) newLiteralString(c, alloca(sizeof(String)))
+#define LITERAL(c) newLiteralString(c, (String*) alloca(sizeof(string)))
 
 typedef struct String {
   uint64_t length;
   uint64_t size;
+  size_t len;
   char *c_str;
 } String;
 typedef String *string;
 
 string newEmptyString();
 string newSizedString(uint64_t size);
-string newString(char *c);
-string newLiteralString(char *c, void * mem);
+string newLiteralString(char *c, string str);
 
 void deleteString(string str);
 string freeAssign(string *dest, string src);

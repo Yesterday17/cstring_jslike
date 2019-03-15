@@ -2,7 +2,6 @@
 // Created by Yesterday17 on 3/15.
 //
 #include "cstring_jslike.h"
-#include <malloc.h>
 #include <stdarg.h>
 #include <string.h>
 
@@ -70,18 +69,20 @@ int charCodeAt(string str, uint64_t index) {
  */
 string concat(uint64_t count, ...) {
   string str = newEmptyString();
-  uint64_t length = 0;
+  uint64_t length = 0, len = 0;
 
   va_list args;
   va_start(args, count);
   for (int i = 0; i < count; i++) {
     string str2 = va_arg(args, string);
     length += str->length;
+    len += str->len;
     freeAssign(&str, concat2(str, str2));
   }
   va_end(args);
 
   str->length = length;
+  str->len = len;
   return str;
 }
 
@@ -93,6 +94,7 @@ string concat(uint64_t count, ...) {
  * @param length
  * @return
  */
+// TODO: Make endsWith UTF-8 compatible
 bool endsWith(string src, string search, uint64_t length) {
   bool match = true;
   if (src->length < length) {
@@ -150,6 +152,11 @@ bool endsWithT(string src, string search) {
   return endsWith(src, search, src->length);
 }
 
+/**
+ * Calculate the length of a UTF-8 string.
+ * @param src The UTF-8 string.
+ * @return The actual length of the string.
+ */
 size_t length(string src) {
   size_t size = 0;
   for (int i = 0; i < src->length; i++) {
@@ -189,6 +196,7 @@ string newEmptyString() {
 
   str->length = 0;
   str->size = STRING_START_SIZE - 1;
+  str->len = 0;
   return str;
 }
 
@@ -211,22 +219,7 @@ string newSizedString(uint64_t size) {
 
   str->length = 0;
   str->size = next - 1;
-  return str;
-}
-
-/**
- * Initialize a string from c_str.
- * @param c The c_str.
- * @return A string initialized with c.
- */
-string newString(char *c) {
-  string str = (String *) malloc(sizeof(String));
-
-  str->length = strlen(c);
-  str->size = str->length;
-
-  str->c_str = (char *) malloc(sizeof(char) * (str->length + 1));
-  strcpy(str->c_str, c);
+  str->len = length(str);
   return str;
 }
 
@@ -238,12 +231,11 @@ string newString(char *c) {
  * @param mem memory allocated on stack
  * @return
  */
-string newLiteralString(char *c, void * mem) {
-  string str = (String *) mem;
-
+string newLiteralString(char *c, string str) {
+  str->c_str = c;
   str->length = strlen(c);
   str->size = str->length;
-  str->c_str = c;
+  str->len = length(str);
   return str;
 }
 

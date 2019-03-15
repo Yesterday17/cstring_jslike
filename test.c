@@ -8,12 +8,12 @@ int main() {
   printf("\n");
 
   // String literal
-  string str2 = concat2(str1, LITERAL("2333"));
+  string str2 = concat2(str1, STRING("2333"));
   printf("str2 is: %s\n", str2->c_str);
   printf("\n");
 
   // String concat
-  string str3 = concat(3, str1, LITERAL(" "), str2);
+  string str3 = concat(3, str1, STRING(" "), str2);
   printf("str1 + space + str2 is: %s\n", str3->c_str);
   printf("\n");
 
@@ -24,17 +24,17 @@ int main() {
 
   // UTF-8 charAt
   string str4 = LITERAL(u8"怎么说");
-  printf("str4.charAt(2) is: %s\n", charAtU(str4, 2)->c_str);
+  printf("'%s'.charAtU(2) is: %s\n", str4->c_str, charAtU(str4, 2)->c_str);
   printf("\n");
 
   // ASCII endWith
-  printf("str1.endWith('BC') is: %s\n", endsWithT(str1, LITERAL("BC")) ? "true" : "false");
-  printf("str1.endWith('B') is: %s\n", endsWithT(str1, LITERAL("B")) ? "true" : "false");
-  printf("str1.endWith('B', 2) is: %s\n", endsWith(str1, LITERAL("B"), 2) ? "true" : "false");
+  printf("str1.endWith('BC') is: %s\n", endsWithT(str1, STRING("BC")) ? "true" : "false");
+  printf("str1.endWith('B') is: %s\n", endsWithT(str1, STRING("B")) ? "true" : "false");
+  printf("str1.endWith('B', 2) is: %s\n", endsWith(str1, STRING("B"), 2) ? "true" : "false");
   printf("\n");
 
   // UTF-8 string length
-  string str5 = LITERAL(u8"霹雳霹雳🍻");
+  string str5 = STRING(u8"霹雳霹雳🍻");
   printf("length('%s') is: %llu\n", str5->c_str, length(str5));
   printf("\n");
 
