@@ -14,8 +14,9 @@ struct String;
 typedef struct String *string;
 
 typedef struct String {
-  char *c_str;
   uint64_t length;
+  uint64_t size;
+  char *c_str;
 } String;
 
 string newEmptyString();

@@ -80,7 +80,9 @@ string newEmptyString() {
   string str = (String *) malloc(sizeof(String));
   str->c_str = (char *) malloc(sizeof(char) * STRING_START_SIZE);
   memset(str->c_str, '\0', STRING_START_SIZE);
+
   str->length = 0;
+  str->size = STRING_START_SIZE - 1;
   return str;
 }
 
@@ -99,8 +101,10 @@ string newSizedString(uint64_t size) {
 
   string str = (String *) malloc(sizeof(String));
   str->c_str = (char *) malloc(sizeof(char) * next);
-  memset(str->c_str, '\0', STRING_START_SIZE);
+  memset(str->c_str, '\0', next);
 
+  str->length = 0;
+  str->size = next - 1;
   return str;
 }
 
@@ -110,9 +114,10 @@ string newSizedString(uint64_t size) {
  * @return A string initialized with c.
  */
 string newString(char *c) {
-  string str = newEmptyString();
+  string str = (String *) malloc(sizeof(String));
   strcpy(str->c_str, c);
   str->length = strlen(str->c_str);
+  str->size = str->length;
   return str;
 }
 
