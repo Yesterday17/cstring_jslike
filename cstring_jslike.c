@@ -8,8 +8,6 @@
 #include <stdbool.h>
 
 #define STRING_START_SIZE 16
-bool prototypeInitialized = false;
-StringPrototype STRING_PROTOTYPE;
 
 string charCodeAt(uint64_t count, ...) {
   string str = newSizedString(count);
@@ -35,14 +33,25 @@ string concat2(string a, string b) {
   return ans;
 }
 
-string concat(int count, string *arr) {
+string concat(uint64_t count, ...) {
+  string str = newEmptyString();
+  uint64_t length = 0;
 
+  va_list args;
+  va_start(args, count);
+  for (int i = 0; i < count; i++) {
+    string str2 = va_arg(args, string);
+    length += str->length;
+    freeAssign(&str, concat2(str, str2));
+  }
+  va_end(args);
+
+  str->length = length;
+  return str;
 }
 
 /**
  * https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2
- * @param v
- * @return
  */
 uint64_t findNext2Exp(uint64_t v) {
   v--;
@@ -55,14 +64,6 @@ uint64_t findNext2Exp(uint64_t v) {
   return v;
 }
 
-void initPrototype() {
-  if (!prototypeInitialized) {
-    STRING_PROTOTYPE.charCodeAt = charCodeAt;
-    STRING_PROTOTYPE.concat2 = concat2;
-    prototypeInitialized = true;
-  }
-}
-
 /**
  * Initialize a string with STRING_START_SIZE.
  * @return An empty string.
@@ -71,7 +72,7 @@ string newEmptyString() {
   string str = (String *) malloc(sizeof(String));
   str->c_str = (char *) malloc(sizeof(char) * STRING_START_SIZE);
   memset(str->c_str, '\0', STRING_START_SIZE);
-  initPrototype();
+  str->length = 0;
   return str;
 }
 
@@ -92,7 +93,6 @@ string newSizedString(uint64_t size) {
   str->c_str = (char *) malloc(sizeof(char) * next);
   memset(str->c_str, '\0', STRING_START_SIZE);
 
-  initPrototype();
   return str;
 }
 
@@ -106,4 +106,25 @@ string newString(char *c) {
   strcpy(str->c_str, c);
   str->length = strlen(str->c_str);
   return str;
+}
+
+/**
+ * Delete a string.
+ * @param str The string
+ */
+void deleteString(string str) {
+  free(str->c_str);
+  free(str);
+}
+
+/**
+ * Assign a string and free the previous one.
+ * @param dest The string to free & assign.
+ * @param src The string to be assigned.
+ * @return (Optional) The string assigned.
+ */
+string freeAssign(string* dest, string src) {
+  deleteString(*dest);
+  *dest = src;
+  return *dest;
 }
