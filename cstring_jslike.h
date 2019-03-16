@@ -9,77 +9,82 @@
 #ifndef CSTRING_JSLIKE_CSTRING_JSLIKE_H
 #define CSTRING_JSLIKE_CSTRING_JSLIKE_H
 
-#define $init$ = newEmptyString()
-#define STRING(c) newLiteralString(c, (String*) malloc(sizeof(String)), true)
-#define $STRING(c) deleteString(c)
+#define $init$ newEmptyString()
+#define STR_BUF(c) newString(u8##c)
+#define $STR_BUF(c) deleteString(c)
 
 #ifndef _WIN32
-#define LITERAL(c) newLiteralString(c, (String*) alloca(sizeof(String)), false)
+#define STRING(c) newLiteralString(c, (String*) alloca(sizeof(String)), NULL)
+#define LITERAL(c) newLiteralString(u8##c, (String*) alloca(sizeof(String)), NULL)
+#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) alloca(sizeof(String)), (char*) alloca(sizeof(char)*(str)->unitCnt))
 #else
-#define LITERAL(c) newLiteralString(c, (String*) _alloca(sizeof(String)), false)
+#define STRING(c) newLiteralString(c, (String*) _alloca(sizeof(String)), NULL)
+#define LITERAL(c) newLiteralString(u8##c, (String*) _alloca(sizeof(String)), NULL)
+#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) _alloca(sizeof(String)), (char*) _alloca(sizeof(char)*(str)->unitCnt))
 #endif
 
 typedef struct String {
+  size_t unitCnt;
+  size_t bufSize;
   size_t length;
-  size_t size;
-  size_t len;
   char *c_str;
 } String;
 typedef String *string;
+typedef string stringbuf;
 
 // Create string
-string newEmptyString();
-string newSizedString(size_t size);
-string newLiteralString(char *c, string str, bool copy);
+stringbuf newEmptyString();
+stringbuf newSizedString(size_t size);
+stringbuf newString(char *c);
+string newLiteralString(char *c, string str, char *buf);
 
 // Release string
-void deleteString(string str);
+void deleteString(stringbuf str);
 string freeAssign(string *dest, string src);
 
 // Basic utilities
-#define STRING_EQUAL 0
-#define STRING_LARGER 1
-#define STRING_SMALLER 2
+const int STRING_EQUAL = 0;
+const int STRING_LARGER = 1;
+const int STRING_SMALLER = 2;
 uint8_t compareString(string str1, string str2);
-string reverseString(string str);
-string cloneString(string str);
+stringbuf reverseString(string str);
+stringbuf cloneString(string str);
 
 // Methods & prototype methods
-string fromCharCode(uint64_t count, ...);
+stringbuf fromCharCode(uint64_t count, ...);
 char charAt(string str, size_t index);
 int charCodeAt(string str, size_t index);
-string concat(uint64_t count, ...);
+stringbuf concat(uint64_t count, ...);
 bool endsWith(string src, string search, size_t len);
 bool includes(string src, string pattern);
 size_t indexOf(string str, string pattern, size_t from);
 size_t lastIndexOf(string str, string pattern, size_t from);
-string padEnd(string str, size_t len, string toPad);
-string padStart(string str, size_t len, string toPad);
-string repeat(string str, size_t times);
-string slice(string str, int64_t beginSlice, int64_t endSlice);
-size_t split(string str, string separator, string **array);
+stringbuf padEnd(string str, size_t len, string toPad);
+stringbuf padStart(string str, size_t len, string toPad);
+stringbuf repeat(string str, size_t times);
+stringbuf slice(string str, int64_t beginSlice, int64_t endSlice);
 
 // Help methods
-string concat2(string a, string b);
-#define endsWithD(src, search) endsWith(src, search, src->length)
-#define padEndD(str, len) padEnd(str, len, LITERAL(" "))
-#define padStartD(str, len) padStart(str, len, LITERAL(" "))
-#define sliceD(str, beginSlice) slice(str, beginSlice, str->length)
+stringbuf concat2(string a, string b);
+bool endsWithD(string src, string search);
+stringbuf padEndD(string str, size_t len);
+stringbuf padStartD(string str, size_t len);
+stringbuf sliceD(string str, int64_t beginSlice);
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
 bool endsWithU(string src, string search, size_t len);
 
 // UTF-8 help methods
-size_t length(string str);
+size_t length(string src);
 uint8_t ucharSize(string str, size_t offset);
-#define endsWithUD(src, search) endsWithU(src, search, src->len)
+bool endsWithUD(string src, string search);
 
 // Help macros
-#define STR(str) str->c_str
+#define U8_CSTR(str) str->c_str
 
 // Encoding
 char *stringToGBK(string str);
-#define OPT(str) stringToGBK(str)
+#define CSTR(str) stringToGBK(str)
 
 #endif //CSTRING_JSLIKE_CSTRING_JSLIKE_H

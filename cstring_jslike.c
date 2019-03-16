@@ -51,29 +51,29 @@ char *strrev(char *str) {
 //////////////////////////////////////////////////////////////////
 
 uint8_t compareString(string str1, string str2) {
+  if (str1->unitCnt != str2->unitCnt) return false;
   if (str1->length != str2->length) return false;
-  if (str1->len != str2->len) return false;
-  for (int i = 0; i < str1->length; i++) {
-    if (STR(str1)[i] > STR(str2)[i]) {
+  for (int i = 0; i < str1->unitCnt; i++) {
+    if (U8_CSTR(str1)[i] > U8_CSTR(str2)[i]) {
       return STRING_LARGER;
-    } else if (STR(str1)[i] < STR(str2)[i]) {
+    } else if (U8_CSTR(str1)[i] < U8_CSTR(str2)[i]) {
       return STRING_SMALLER;
     }
   }
   return STRING_EQUAL;
 }
 
-string reverseString(string str) {
-  string rev = newSizedString(str->length);
-  strcpy(STR(rev), STR(str));
-  strrev(STR(rev));
+stringbuf reverseString(string str) {
+  string rev = newSizedString(str->unitCnt);
+  strcpy(U8_CSTR(rev), U8_CSTR(str));
+  strrev(U8_CSTR(rev));
   return rev;
 }
 
 // TODO: Add reverseStringU method
 
-string cloneString(string str) {
-  return newLiteralString(STR(str), (String *) malloc(sizeof(String)), true);
+stringbuf cloneString(string str) {
+  return newLiteralString(U8_CSTR(str), (String *) malloc(sizeof(String)), (char*) malloc(sizeof(str->unitCnt)));
 }
 
 //////////////////////////////////////////////////////////////////
@@ -88,18 +88,18 @@ string cloneString(string str) {
  * @return
  */
 // TODO: Implement UTF-16 code units.
-string fromCharCode(uint64_t count, ...) {
+stringbuf fromCharCode(uint64_t count, ...) {
   string str = newSizedString(count);
 
   va_list args;
   va_start(args, count);
   for (int i = 0; i < count; i++) {
     int character = va_arg(args, int);
-    STR(str)[i] = (char) character;
+    str->c_str[i] = (char) character;
   }
   va_end(args);
 
-  str->length = count;
+  str->unitCnt = count;
   return str;
 }
 
@@ -112,8 +112,8 @@ string fromCharCode(uint64_t count, ...) {
  */
 // TODO: Implement UTF-16 code unit.
 char charAt(string str, size_t index) {
-  if (index <= str->length - 1) {
-    return STR(str)[index];
+  if (index <= str->unitCnt - 1) {
+    return str->c_str[index];
   } else {
     return 0;
   }
@@ -140,7 +140,7 @@ int charCodeAt(string str, size_t index) {
  * @param ... The strings to concat.
  * @return
  */
-string concat(uint64_t count, ...) {
+stringbuf concat(uint64_t count, ...) {
   string str = newEmptyString();
   size_t length = 0, len = 0;
 
@@ -148,14 +148,14 @@ string concat(uint64_t count, ...) {
   va_start(args, count);
   for (int i = 0; i < count; i++) {
     string str2 = va_arg(args, string);
-    length += str2->length;
-    len += str2->len;
+    length += str2->unitCnt;
+    len += str2->length;
     freeAssign(&str, concat2(str, str2));
   }
   va_end(args);
 
-  str->length = length;
-  str->len = len;
+  str->unitCnt = length;
+  str->length = len;
   return str;
 }
 
@@ -168,12 +168,12 @@ string concat(uint64_t count, ...) {
  * @return
  */
 bool endsWith(string src, string search, size_t len) {
-  if (src->length < len) {
-    len = src->length;
+  if (src->unitCnt < len) {
+    len = src->unitCnt;
   }
 
-  for (int i = 0; i < search->length; i++) {
-    if (charAt(src, len - 1 - i) != charAt(search, search->length - 1 - i)) {
+  for (int i = 0; i < search->unitCnt; i++) {
+    if (charAt(src, len - 1 - i) != charAt(search, search->unitCnt - 1 - i)) {
       return false;
     }
   }
@@ -188,7 +188,7 @@ bool endsWith(string src, string search, size_t len) {
  * @return
  */
 bool includes(string src, string pattern) {
-  return (strstr(STR(src), STR(pattern)) != NULL);
+  return (strstr(U8_CSTR(src), U8_CSTR(pattern)) != NULL);
 }
 
 /**
@@ -201,11 +201,11 @@ bool includes(string src, string pattern) {
  * @return
  */
 size_t indexOf(string str, string pattern, size_t from) {
-  char *occur = strstr(STR(str) + from, STR(pattern));
+  char *occur = strstr(U8_CSTR(str) + from, U8_CSTR(pattern));
   if (occur != NULL) {
-    return occur - STR(str);
+    return occur - U8_CSTR(str);
   } else {
-    return str->length;
+    return str->unitCnt;
   }
 }
 
@@ -223,7 +223,7 @@ size_t lastIndexOf(string str, string pattern, size_t from) {
   size_t index = indexOf(r_str, r_pattern, from);
   deleteString(r_str);
   deleteString(r_pattern);
-  return str->length - index - 1;
+  return str->unitCnt - index - 1;
 }
 
 /**
@@ -236,19 +236,19 @@ size_t lastIndexOf(string str, string pattern, size_t from) {
  * @return
  */
 // TODO: Implement padEndU
-string padEnd(string str, size_t len, string toPad) {
-  if (str->length >= len) return cloneString(str);
+stringbuf padEnd(string str, size_t len, string toPad) {
+  if (str->unitCnt >= len) return cloneString(str);
   string result = newSizedString(len);
-  memcpy(STR(result), STR(str), str->length);
+  memcpy(U8_CSTR(result), U8_CSTR(str), str->unitCnt);
 
-  for (size_t offset = str->length; offset < len; offset += toPad->length) {
-    memcpy(STR(result) + offset,
-           STR(toPad),
-           offset + toPad->length > len ? len - offset : toPad->length);
+  for (size_t offset = str->unitCnt; offset < len; offset += toPad->unitCnt) {
+    memcpy(U8_CSTR(result) + offset,
+           U8_CSTR(toPad),
+           offset + toPad->unitCnt > len ? len - offset : toPad->unitCnt);
   }
 
-  result->length = len;
-  result->len = length(result);
+  result->unitCnt = len;
+  result->length = length(result);
   return result;
 }
 
@@ -262,19 +262,19 @@ string padEnd(string str, size_t len, string toPad) {
  * @return
  */
 // TODO: Implement padStartU
-string padStart(string str, size_t len, string toPad) {
-  if (str->length >= len) return cloneString(str);
+stringbuf padStart(string str, size_t len, string toPad) {
+  if (str->unitCnt >= len) return cloneString(str);
   string result = newSizedString(len);
-  memcpy(STR(result) + len - str->length, STR(str), str->length);
+  memcpy(U8_CSTR(result) + len - str->unitCnt, U8_CSTR(str), str->unitCnt);
 
-  for (size_t offset = 0; offset < len - str->length; offset += toPad->length) {
-    memcpy(STR(result) + offset,
-           STR(toPad),
-           offset + toPad->length > len - str->length ? len - offset - str->length : toPad->length);
+  for (size_t offset = 0; offset < len - str->unitCnt; offset += toPad->unitCnt) {
+    memcpy(U8_CSTR(result) + offset,
+           U8_CSTR(toPad),
+           offset + toPad->unitCnt > len - str->unitCnt ? len - offset - str->unitCnt : toPad->unitCnt);
   }
 
-  result->length = len;
-  result->len = length(result);
+  result->unitCnt = len;
+  result->length = length(result);
   return result;
 }
 
@@ -285,13 +285,13 @@ string padStart(string str, size_t len, string toPad) {
  * @param times
  * @return
  */
-string repeat(string str, size_t times) {
-  string result = newSizedString(str->length * times);
+stringbuf repeat(string str, size_t times) {
+  string result = newSizedString(str->unitCnt * times);
   for (size_t i = 0; i < times; i++) {
-    memcpy(STR(result) + str->length * i, STR(str), str->length);
+    memcpy(U8_CSTR(result) + str->unitCnt * i, U8_CSTR(str), str->unitCnt);
   }
+  result->unitCnt = times * str->unitCnt;
   result->length = times * str->length;
-  result->len = times * str->len;
   return result;
 }
 
@@ -304,58 +304,21 @@ string repeat(string str, size_t times) {
  * @return
  */
 // TODO: Implement sliceU
-string slice(string str, int64_t beginSlice, int64_t endSlice) {
-  if (beginSlice < 0) beginSlice = str->length + beginSlice;
+stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
+  if (beginSlice < 0) beginSlice = str->unitCnt + beginSlice;
   if (beginSlice < 0) beginSlice = 0;
-  if (endSlice < 0) endSlice = str->length + endSlice;
-  if (endSlice >= str->length) endSlice = str->length;
-  if (beginSlice >= str->length || endSlice < 0 || beginSlice >= endSlice)
+  if (endSlice < 0) endSlice = str->unitCnt + endSlice;
+  if (endSlice >= str->unitCnt) endSlice = str->unitCnt;
+  if (beginSlice >= str->unitCnt || endSlice < 0 || beginSlice >= endSlice)
     return newEmptyString();
 
   size_t len = (size_t) (endSlice - beginSlice);
   string result = newSizedString(len);
-  memcpy(STR(result), STR(str) + beginSlice, len);
+  memcpy(U8_CSTR(result), U8_CSTR(str) + beginSlice, len);
 
-  result->length = len;
-  result->len = length(result);
+  result->unitCnt = len;
+  result->length = length(result);
   return result;
-}
-
-/**
- * The split() method splits a String into an array of strings by separating the string into substrings, using a specified separator string to determine where to make each split.
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
- * @param str
- * @param separator
- * @param array
- * @return
- */
-size_t split(string str, string separator, string **array) {
-  size_t count = 1, index_previous = 0, index = 0, i = 0;
-  if (separator->length == 0) {
-    *array = NULL;
-    return 0;
-  }
-  for (index = 0; index = indexOf(str, separator, index) + 1, index < str->length; count++);
-
-  *array = malloc(sizeof(String) * count);
-  for (index = 0; i < count; i++, index_previous = index) {
-    size_t len;
-    if (i != count - 1) {
-      index = indexOf(str, separator, index) + separator->length;
-      len = index - index_previous - separator->length;
-    } else {
-      index = str->length;
-      len = index - index_previous;
-    }
-
-    string s = newSizedString(len);
-    memcpy(STR(s), STR(str) + index_previous, len);
-    s->length = len;
-    s->len = length(s);
-    (*array)[i] = s;
-  }
-
-  return count;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -369,21 +332,22 @@ size_t split(string str, string separator, string **array) {
  * @param index
  * @return A character at index, or 0 on error.
  */
-string charAtU(string str, size_t index) {
+ // FIXME: Memory leak problem
+ stringbuf charAtU(string str, size_t index) {
   string result = newSizedString(5);
   size_t size = ucharSize(str, 0);
-  if (index < str->len) {
+  if (index < str->length) {
     size_t offset = 0, j;
     for (int i = 0; i < index; i++) {
       size = ucharSize(str, offset);
       offset += size;
     }
     for (j = 0; j < size; offset++, j++) {
-      STR(result)[j] = STR(str)[offset];
+      result->c_str[j] = str->c_str[offset];
     }
-    STR(result)[offset] = '\0';
-    result->length = size;
-    result->len = length(result);
+    result->c_str[offset] = '\0';
+    result->unitCnt = size;
+    result->length = length(result);
   }
   return result;
 }
@@ -397,12 +361,12 @@ string charAtU(string str, size_t index) {
  * @return
  */
 bool endsWithU(string src, string search, size_t len) {
-  if (src->length < len) {
-    len = src->length;
+  if (src->unitCnt < len) {
+    len = src->unitCnt;
   }
 
-  for (int i = 0; i < search->len; i++) {
-    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->len - 1 - i)) != STRING_EQUAL) {
+  for (int i = 0; i < search->length; i++) {
+    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->length - 1 - i)) != STRING_EQUAL) {
       return false;
     }
   }
@@ -413,13 +377,53 @@ bool endsWithU(string src, string search, size_t len) {
 /// Help Methods
 //////////////////////////////////////////////////////////////////
 
-string concat2(string a, string b) {
-  string ans = newSizedString(a->length + b->length);
-  memcpy(STR(ans), STR(a), a->length);
-  memcpy(STR(ans) + a->length, STR(b), b->length);
+stringbuf concat2(string a, string b) {
+  string ans = newSizedString(a->unitCnt + b->unitCnt);
+  memcpy(ans->c_str, a->c_str, a->unitCnt);
+  memcpy(ans->c_str + a->unitCnt, b->c_str, b->unitCnt);
 
-  ans->length = a->length + b->length;
+  ans->unitCnt = a->unitCnt + b->unitCnt;
   return ans;
+}
+
+/**
+ * Default behavior of endWith: Use the actual 'end' of src
+ * @param src
+ * @param search
+ * @return
+ */
+bool endsWithD(string src, string search) {
+  return endsWith(src, search, src->unitCnt);
+}
+
+/**
+ * Default behavior of padEnd: Use ' '(space) to padEnd
+ * @param str
+ * @param len
+ * @return
+ */
+stringbuf padEndD(string str, size_t len) {
+  return padEnd(str, len, LITERAL(" "));
+}
+
+/**
+ * Default behavior of padStart: Use ' '(space) to padStart
+ * @param str
+ * @param len
+ * @return
+ */
+stringbuf padStartD(string str, size_t len) {
+  return padStart(str, len, LITERAL(" "));
+}
+
+/**
+ * Default behavior of slice: Use str->length to fill endSlice
+ * @param str
+ * @param beginSlice
+ * @return
+ */
+stringbuf sliceD(string str, int64_t beginSlice) {
+  return slice(str, beginSlice, str->unitCnt);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -431,10 +435,10 @@ string concat2(string a, string b) {
  * @param src The UTF-8 string.
  * @return The actual length of the string.
  */
-size_t length(string str) {
+size_t length(string src) {
   size_t size = 0;
-  for (int i = 0; i < str->length; i++) {
-    unsigned char c = (unsigned char) STR(str)[i];
+  for (int i = 0; i < src->unitCnt; i++) {
+    unsigned char c = (unsigned char) src->c_str[i];
     if (c >= 0 && c <= 127) i += 0;
     else if ((c & 0xE0) == 0xC0) i += 1;
     else if ((c & 0xF0) == 0xE0) i += 2;
@@ -452,9 +456,9 @@ size_t length(string str) {
  * @return
  */
 uint8_t ucharSize(string str, size_t offset) {
-  if (offset >= str->length) return 0;
+  if (offset >= str->unitCnt) return 0;
   while (true) {
-    unsigned char c = (unsigned char) STR(str)[offset];
+    unsigned char c = (unsigned char) str->c_str[offset];
     if ((c >> 7) == 0b0) {
       return 1;
     } else if (c >> 6 == 0b10) {
@@ -469,18 +473,22 @@ uint8_t ucharSize(string str, size_t offset) {
   }
 }
 
+bool endsWithUD(string src, string search) {
+  return endsWithU(src, search, src->length);
+}
+
 /**
  * Initialize a string with STRING_START_SIZE.
  * @return An empty string.
  */
-string newEmptyString() {
+stringbuf newEmptyString() {
   string str = (String *) malloc(sizeof(String));
-  STR(str) = (char *) malloc(sizeof(char) * STRING_START_SIZE);
-  memset(STR(str), '\0', STRING_START_SIZE);
+  str->c_str = (char *) malloc(sizeof(char) * STRING_START_SIZE);
+  memset(str->c_str, '\0', STRING_START_SIZE);
 
+  str->unitCnt = 0;
+  str->bufSize = STRING_START_SIZE - 1;
   str->length = 0;
-  str->size = STRING_START_SIZE - 1;
-  str->len = 0;
   return str;
 }
 
@@ -489,7 +497,7 @@ string newEmptyString() {
  * @param size The size.
  * @return A string with size.
  */
-string newSizedString(size_t size) {
+stringbuf newSizedString(size_t size) {
   if (size < STRING_START_SIZE) return newEmptyString();
 
   size_t next = findNext2Exp(size);
@@ -498,34 +506,44 @@ string newSizedString(size_t size) {
   }
 
   string str = (String *) malloc(sizeof(String));
-  STR(str) = (char *) malloc(sizeof(char) * next);
-  memset(STR(str), '\0', next);
+  str->c_str = (char *) malloc(sizeof(char) * next);
+  memset(str->c_str, '\0', next);
 
-  str->length = 0;
-  str->size = next - 1;
-  str->len = length(str);
+  str->unitCnt = 0;
+  str->bufSize = next - 1;
+  str->length = length(str);
   return str;
 }
 
 /**
- * Initialize an auto-release literal string
+ * Initialize a string from c_str.
+ * @param c The c_str.
+ * @return A string initialized with c.
+ */
+stringbuf newString(char *c) {
+  size_t bufSize = strlen(c) + 1;
+  return newLiteralString(c, (String *) malloc(sizeof(String)), (char*) malloc(sizeof(char) * bufSize));;
+}
+
+/**
+ * Initialize a literal string from c_str
  *
  * <b>Please do not call this function directly</b>
- * @param c
- * @param str The pointer to the memory allocated on stack
+ * @param c The c_str
+ * @param mem memory allocated on stack
  * @return
  */
-string newLiteralString(char *c, string str, bool copy) {
-  str->length = strlen(c);
-  str->size = str->length;
+string newLiteralString(char *c, string str, char *buf) {
+  str->unitCnt = strlen(c);
+  str->bufSize = str->unitCnt;
 
-  if (copy) {
-    STR(str) = (char *) malloc(sizeof(char) * str->length + 1);
-    strcpy(STR(str), c);
+  if (buf != NULL) {
+    str->c_str = buf;
+    strcpy(str->c_str, c);
   } else {
-    STR(str) = c;
+    str->c_str = c;
   }
-  str->len = length(str);
+  str->length = length(str);
   return str;
 }
 
@@ -538,8 +556,8 @@ string newLiteralString(char *c, string str, bool copy) {
  *
  * @param str The string to delete.
  */
-void deleteString(string str) {
-  free(STR(str));
+void deleteString(stringbuf str) {
+  free(str->c_str);
   free(str);
 }
 
@@ -563,7 +581,7 @@ char *stringToGBK(string str) {
   memset(result, 0, str->length);
 
   size_t in_len = str->length, out_len = str->length;
-  char *in_buf = STR(str);
+  char *in_buf = str->c_str;
 
   iconv_t cd = iconv_open("GBK", "UTF-8");
   if (cd != (iconv_t) - 1) {
@@ -575,16 +593,18 @@ char *stringToGBK(string str) {
 }
 #else
 char *stringToGBK(string str) {
-  char *src = STR(str), *result = (char *) malloc(sizeof(char) * str->length);
+  char *src = str->c_str, *result = (char *) malloc(sizeof(char) * str->unitCnt);
 
   WCHAR *w_str;
   int i = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
   if (i > 0) {
-    w_str = (WCHAR *) malloc((size_t) i * sizeof(WCHAR));
+    w_str = (WCHAR *) malloc((size_t) i * 2);
     MultiByteToWideChar(CP_UTF8, 0, src, -1, w_str, i);
     i = WideCharToMultiByte(CP_ACP, 0, w_str, -1, NULL, 0, NULL, NULL);
-    WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
-    result[i] = 0;
+    if (str->unitCnt >= i) {
+      WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
+      result[i] = 0;
+    }
     free(w_str);
   }
 
