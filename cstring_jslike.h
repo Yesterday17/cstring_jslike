@@ -14,14 +14,14 @@
 #define $STR_BUF(c) deleteString(c)
 
 #ifndef _WIN32
-#define STRING(c) newLiteralString(c, (String*) alloca(sizeof(String)), NULL)
-#define LITERAL(c) newLiteralString(u8##c, (String*) alloca(sizeof(String)), NULL)
-#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) alloca(sizeof(String)), (char*) alloca(sizeof(char)*(str)->unitCnt))
+#define ALLOCA alloca
 #else
-#define STRING(c) newLiteralString(c, (String*) _alloca(sizeof(String)), NULL)
-#define LITERAL(c) newLiteralString(u8##c, (String*) _alloca(sizeof(String)), NULL)
-#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) _alloca(sizeof(String)), (char*) _alloca(sizeof(char)*(str)->unitCnt))
+#define ALLOCA _alloca
 #endif
+#define STRING(c) newLiteralString(c, (String*) ALLOCA(sizeof(String)), NULL)
+#define LITERAL(c) newLiteralString(u8##c, (String*) ALLOCA(sizeof(String)), NULL)
+#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) ALLOCA(sizeof(String)), (char*) ALLOCA(sizeof(char)*(str)->unitCnt))
+#define _SIZED_LITERAL(size) newLiteralString((char*) ALLOCA(sizeof(char) * (size)), (String*) ALLOCA(sizeof(String)), NULL)
 
 typedef struct String {
   size_t unitCnt;
@@ -52,7 +52,9 @@ stringbuf cloneString(string str);
 
 // Methods & prototype methods
 stringbuf fromCharCode(uint64_t count, ...);
-char* charAt(string str, size_t index);
+
+#define charAt(str,index) _charAt((str),(index),ALLOCA(sizeof(char)*3))
+char* _charAt(string str, size_t index, char *buf);
 int charCodeAt(string str, size_t index);
 stringbuf concat(uint64_t count, ...);
 bool endsWith(string src, string search, size_t len);
@@ -72,7 +74,8 @@ stringbuf padStartD(string str, size_t len);
 stringbuf sliceD(string str, int64_t beginSlice);
 
 // UTF-8 methods
-string charAtU(string str, size_t index);
+#define charAtU(str,index) _charAtU((str), (index), _SIZED_LITERAL(5))
+string _charAtU(string str, size_t index, stringbuf buf);
 bool endsWithU(string src, string search, size_t len);
 
 // UTF-8 help methods
@@ -86,6 +89,6 @@ bool endsWithUD(string src, string search);
 // Encoding
 char *stringToGBK(string str);
 #define CSTR(str) stringToGBK(str)
-char *cstrToGBK(char *src, size_t len);
+char *cstrToGBK(char *src, size_t len, char *buf);
 
 #endif //CSTRING_JSLIKE_CSTRING_JSLIKE_H

@@ -114,12 +114,11 @@ stringbuf fromCharCode(uint64_t count, ...) {
  * @return A char pointer of character(GBK) at index, or NULL on error.
  */
 // TODO: Implement UTF-16 code unit.
-// FIXME: Memory leak problem
-char* charAt(string str, size_t index) {
-  string u8Char = charAtU(str, index);
-  if (u8Char == NULL)
+char* _charAt(string str, size_t index, char *buf) {
+  string ch = charAtU(str, index);
+  if (ch == NULL)
     return NULL;
-  return CSTR(u8Char);
+  return cstrToGBK(U8_CSTR(ch), 5, buf);
 }
 
 /**
@@ -339,9 +338,7 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
  * @param index
  * @return A character at index, or 0 on error.
  */
- // FIXME: Memory leak problem
- stringbuf charAtU(string str, size_t index) {
-  stringbuf result = newSizedString(5);
+ stringbuf _charAtU(string str, size_t index, stringbuf buf) {
   size_t size = ucharSize(str, 0);
   if (index < str->length) {
     size_t offset = 0, j;
@@ -350,13 +347,13 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
       offset += size;
     }
     for (j = 0; j < size; offset++, j++) {
-      result->c_str[j] = str->c_str[offset];
+      buf->c_str[j] = str->c_str[offset];
     }
-    result->c_str[offset] = '\0';
-    result->unitCnt = size;
-    result->length = length(result);
+    buf->c_str[offset] = '\0';
+    buf->unitCnt = size;
+    buf->length = length(buf);
   }
-  return result;
+  return buf;
 }
 
 /**
@@ -582,12 +579,15 @@ string freeAssign(string *dest, string src) {
 
 char *stringToGBK(string str) {
   char *src = str->c_str;
-  return cstrToGBK(src, str->unitCnt);
+  return cstrToGBK(src, str->unitCnt, NULL);
 }
 
 #ifndef _WIN32
-char *cstrToGBK(char *src, size_t len) {
-  char *result = (char *) malloc(sizeof(char) * len), *out_buf = result;
+char *cstrToGBK(char *src, size_t len, char *buf) {
+  char *result = buf, *out_buf;
+  if (buf == NULL)
+    result = (char *) malloc(sizeof(char) * len);
+  out_buf = result;
   memset(result, 0, len);
 
   size_t in_len = len, out_len = len;
@@ -602,8 +602,8 @@ char *cstrToGBK(char *src, size_t len) {
   return result;
 }
 #else
-char *cstrToGBK(char *src, size_t len) {
-  char *result = NULL;
+char *cstrToGBK(char *src, size_t len, char *buf) {
+  char *result = buf;
 
   WCHAR *w_str;
   int i = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
@@ -611,7 +611,8 @@ char *cstrToGBK(char *src, size_t len) {
     w_str = (WCHAR *) malloc((size_t) i * sizeof(WCHAR));
     MultiByteToWideChar(CP_UTF8, 0, src, -1, w_str, i);
     i = WideCharToMultiByte(CP_ACP, 0, w_str, -1, NULL, 0, NULL, NULL);
-    result = (char *) malloc(sizeof(char) * (i + 1));
+    if (buf == NULL)
+      result = (char *) malloc(sizeof(char) * (i + 1));
     WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
     result[i] = 0;
     free(w_str);
