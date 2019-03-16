@@ -14,6 +14,39 @@
 #define STRING_START_SIZE 16
 
 //////////////////////////////////////////////////////////////////
+/// Help functions
+//////////////////////////////////////////////////////////////////
+
+/**
+ * https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2
+ */
+size_t findNext2Exp(size_t v) {
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  v++;
+  return v;
+}
+
+/**
+ * https://stackoverflow.com/a/8534275
+ */
+char *strrev(char *str) {
+  char *p1, *p2;
+  if (!str || !*str)
+    return str;
+  for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2) {
+    *p1 ^= *p2;
+    *p2 ^= *p1;
+    *p1 ^= *p2;
+  }
+  return str;
+}
+
+//////////////////////////////////////////////////////////////////
 /// Basic Utilities
 //////////////////////////////////////////////////////////////////
 
@@ -348,20 +381,6 @@ uint8_t ucharSize(string str, size_t offset) {
 
 bool endsWithUD(string src, string search) {
   return endsWithU(src, search, src->len);
-}
-
-/**
- * https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2
- */
-size_t findNext2Exp(size_t v) {
-  v--;
-  v |= v >> 1;
-  v |= v >> 2;
-  v |= v >> 4;
-  v |= v >> 8;
-  v |= v >> 16;
-  v++;
-  return v;
 }
 
 /**
