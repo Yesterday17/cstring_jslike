@@ -84,6 +84,14 @@ int main() {
   printf("str6.repeat(10) is: %s\n", STR(repeat(str6, 10)));
   printf("\n");
 
+  // slice
+  printf("str3.slice(5, 9) is: %s\n", STR(slice(str3, 5, 9)));
+  printf("str3.slice(5, -1) is: %s\n", STR(slice(str3, 5, -1)));
+  printf("str3.slice(-6, 11) is: %s\n", STR(slice(str3, -6, 11)));
+  printf("str3.slice(-6, -4) is: %s\n", STR(slice(str3, -6, -4)));
+  printf("str3.slice(-6) is: %s\n", STR(sliceD(str3, -6)));
+  printf("\n");
+
   /// Delete(free) the string like the following:
   $STRING(str1);
   $STRING(str2);

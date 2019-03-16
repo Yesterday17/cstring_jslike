@@ -112,7 +112,7 @@ string fromCharCode(uint64_t count, ...) {
  */
 // TODO: Implement UTF-16 code unit.
 char charAt(string str, size_t index) {
-  if (index >= 0 && index <= str->length - 1) {
+  if (index <= str->length - 1) {
     return str->c_str[index];
   } else {
     return 0;
@@ -148,8 +148,8 @@ string concat(uint64_t count, ...) {
   va_start(args, count);
   for (int i = 0; i < count; i++) {
     string str2 = va_arg(args, string);
-    length += str->length;
-    len += str->len;
+    length += str2->length;
+    len += str2->len;
     freeAssign(&str, concat2(str, str2));
   }
   va_end(args);
@@ -295,6 +295,32 @@ string repeat(string str, size_t times) {
   return result;
 }
 
+/**
+ * The slice() method extracts a section of a string and returns it as a new string, without modifying the original string.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/slice
+ * @param str
+ * @param beginSlice
+ * @param endSlice
+ * @return
+ */
+// TODO: Implement sliceU
+string slice(string str, int64_t beginSlice, int64_t endSlice) {
+  if (beginSlice < 0) beginSlice = str->length + beginSlice;
+  if (beginSlice < 0) beginSlice = 0;
+  if (endSlice < 0) endSlice = str->length + endSlice;
+  if (endSlice >= str->length) endSlice = str->length;
+  if (beginSlice >= str->length || endSlice < 0 || beginSlice >= endSlice)
+    return newEmptyString();
+
+  size_t len = (size_t) (endSlice - beginSlice);
+  string result = newSizedString(len);
+  memcpy(STR(result), STR(str) + beginSlice, len);
+
+  result->length = len;
+  result->len = length(result);
+  return result;
+}
+
 //////////////////////////////////////////////////////////////////
 /// UTF-8 Methods
 //////////////////////////////////////////////////////////////////
@@ -309,7 +335,7 @@ string repeat(string str, size_t times) {
 string charAtU(string str, size_t index) {
   string result = newSizedString(5);
   size_t size = ucharSize(str, 0);
-  if (index >= 0 && index < str->len) {
+  if (index < str->len) {
     size_t offset = 0, j;
     for (int i = 0; i < index; i++) {
       size = ucharSize(str, offset);
@@ -387,6 +413,16 @@ string padEndD(string str, size_t len) {
  */
 string padStartD(string str, size_t len) {
   return padStart(str, len, LITERAL(" "));
+}
+
+/**
+ * Default behavior of slice: Use str->length to fill endSlice
+ * @param str
+ * @param beginSlice
+ * @return
+ */
+string sliceD(string str, int64_t beginSlice) {
+  return slice(str, beginSlice, str->length);
 }
 
 //////////////////////////////////////////////////////////////////

@@ -56,12 +56,14 @@ size_t lastIndexOf(string str, string pattern, size_t from);
 string padEnd(string str, size_t len, string toPad);
 string padStart(string str, size_t len, string toPad);
 string repeat(string str, size_t times);
+string slice(string str, int64_t beginSlice, int64_t endSlice);
 
 // Help methods
 string concat2(string a, string b);
 bool endsWithD(string src, string search);
 string padEndD(string str, size_t len);
 string padStartD(string str, size_t len);
+string sliceD(string str, int64_t beginSlice);
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
