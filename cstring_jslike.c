@@ -272,8 +272,10 @@ void deleteString(string str) {
  * @return (Optional) The string assigned.
  */
 string freeAssign(string *dest, string src) {
-  deleteString(*dest);
-  *dest = src;
+  if (*dest != src) {
+    deleteString(*dest);
+    *dest = src;
+  }
   return *dest;
 }
 

@@ -4,12 +4,12 @@
 int main() {
   // ASCII fromCharCode
   string str1 = fromCharCode(3, 65, 66, 67);
-  printf("str1 is: %s\n", str1->c_str);
+  printf("str1 is: %s\n", STR(str1));
   printf("\n");
 
   // String literal
   string str2 = concat2(str1, LITERAL("2333"));
-  printf("str2 is: %s\n", str2->c_str);
+  printf("str2 is: %s\n", STR(str2));
   printf("\n");
 
   // String concat
@@ -17,7 +17,7 @@ int main() {
   // (as it's allocated by alloca method)
   // and can be released automatically after function call
   string str3 = concat(3, str1, LITERAL(" "), str2);
-  printf("str1 + space + str2 is: %s\n", str3->c_str);
+  printf("str1 + space + str2 is: %s\n", STR(str3));
   printf("\n");
 
   // ASCII charAt & charCodeAt
@@ -29,7 +29,7 @@ int main() {
   /// You **MUST** delete(free) the string manually
   // (as it's allocated by malloc method)
   string str4 = STRING(u8"怎么说");
-  printf("'%s'.charAtU(2) is: %s\n", str4->c_str, charAtU(str4, 2)->c_str);
+  printf("'%s'.charAtU(2) is: %s\n", STR(str4), STR(charAtU(str4, 2)));
   /// Delete(free) the string like this:
   $STRING(str4);
   printf("\n");
@@ -42,12 +42,12 @@ int main() {
 
   // UTF-8 string length
   string str5 = STRING(u8"霹雳霹雳🍻");
-  printf("str5 is: %s\n", str5->c_str);
+  printf("str5 is: %s\n", STR(str5));
   printf("length(str5) is: %llu\n", length(str5));
   printf("\n");
 
   // String To GBK
-  printf("str5 in GBK is: %s\n", stringToGBK(str5));
+  printf("str5 in GBK is: %s\n", OPT(str5));
   $STRING(str5);
   printf("\n");
 
