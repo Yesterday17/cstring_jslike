@@ -242,7 +242,35 @@ string padEnd(string str, size_t len, string toPad) {
   memcpy(STR(result), STR(str), str->length);
 
   for (size_t offset = str->length; offset < len; offset += toPad->length) {
-    memcpy(STR(result) + offset, STR(toPad), offset + toPad->length > len ? offset - toPad->length : toPad->length);
+    memcpy(STR(result) + offset,
+           STR(toPad),
+           offset + toPad->length > len ? len - offset : toPad->length);
+  }
+
+  result->length = len;
+  result->len = length(result);
+  return result;
+}
+
+/**
+ * The padStart() method pads the current string with another string (multiple times, if needed) until the resulting string reaches the given length.
+ * The padding is applied from the start (left) of the current string.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
+ * @param str
+ * @param len
+ * @param toPad
+ * @return
+ */
+// TODO: Implement padStartU
+string padStart(string str, size_t len, string toPad) {
+  if (str->length >= len) return cloneString(str);
+  string result = newSizedString(len);
+  memcpy(STR(result) + len - str->length, STR(str), str->length);
+
+  for (size_t offset = 0; offset < len - str->length; offset += toPad->length) {
+    memcpy(STR(result) + offset,
+           STR(toPad),
+           offset + toPad->length > len - str->length ? len - offset - str->length : toPad->length);
   }
 
   result->length = len;
@@ -332,6 +360,16 @@ bool endsWithD(string src, string search) {
  */
 string padEndD(string str, size_t len) {
   return padEnd(str, len, LITERAL(" "));
+}
+
+/**
+ * Default behavior of padStart: Use ' '(space) to padStart
+ * @param str
+ * @param len
+ * @return
+ */
+string padStartD(string str, size_t len) {
+  return padStart(str, len, LITERAL(" "));
 }
 
 //////////////////////////////////////////////////////////////////

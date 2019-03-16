@@ -54,11 +54,13 @@ bool includes(string src, string pattern);
 size_t indexOf(string str, string pattern, size_t from);
 size_t lastIndexOf(string str, string pattern, size_t from);
 string padEnd(string str, size_t len, string toPad);
+string padStart(string str, size_t len, string toPad);
 
 // Help methods
 string concat2(string a, string b);
 bool endsWithD(string src, string search);
 string padEndD(string str, size_t len);
+string padStartD(string str, size_t len);
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
