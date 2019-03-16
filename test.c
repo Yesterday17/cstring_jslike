@@ -23,7 +23,7 @@ int main() {
   printf("\n");
 
   // ASCII charAt & charCodeAt
-  printf("str1.charAt(2) is: %c\n", charAt(str1, 2));
+  printf("str1.charAt(2) is: %c\n", *charAt(str1, 2));
   printf("str1.charCodeAt(2) is: %d\n", charCodeAt(str1, 2));
   printf("\n");
 
@@ -32,6 +32,7 @@ int main() {
   // (as it's allocated by malloc method)
   stringbuf str4 = STR_BUF("怎么说");
   printf("str4 is: %s\n", CSTR(str4));
+  printf("str4.charAt(2) is: %s\n", charAt(str4, 2));
   printf("str4.charAtU(2) is: %s\n", CSTR(charAtU(str4, 2)));
   printf("\n");
 

@@ -52,7 +52,7 @@ stringbuf cloneString(string str);
 
 // Methods & prototype methods
 stringbuf fromCharCode(uint64_t count, ...);
-char charAt(string str, size_t index);
+char* charAt(string str, size_t index);
 int charCodeAt(string str, size_t index);
 stringbuf concat(uint64_t count, ...);
 bool endsWith(string src, string search, size_t len);
@@ -86,5 +86,6 @@ bool endsWithUD(string src, string search);
 // Encoding
 char *stringToGBK(string str);
 #define CSTR(str) stringToGBK(str)
+char *cstrToGBK(char *src, size_t len);
 
 #endif //CSTRING_JSLIKE_CSTRING_JSLIKE_H

@@ -111,15 +111,15 @@ stringbuf fromCharCode(uint64_t count, ...) {
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charAt
  * @param str
  * @param index
- * @return A character at index, or 0 on error.
+ * @return A char pointer of character(GBK) at index, or NULL on error.
  */
 // TODO: Implement UTF-16 code unit.
-char charAt(string str, size_t index) {
-  if (index <= str->unitCnt - 1) {
-    return str->c_str[index];
-  } else {
-    return 0;
-  }
+// FIXME: Memory leak problem
+char* charAt(string str, size_t index) {
+  string u8Char = charAtU(str, index);
+  if (u8Char == NULL)
+    return NULL;
+  return CSTR(u8Char);
 }
 
 /**
@@ -131,7 +131,11 @@ char charAt(string str, size_t index) {
  */
 // TODO: Implement UTF-16 code unit.
 int charCodeAt(string str, size_t index) {
-  return charAt(str, index);
+  if (index <= str->unitCnt - 1) {
+    return str->c_str[index];
+  } else {
+    return 0;
+  }
 }
 
 // TODO: charPointAt
@@ -576,13 +580,18 @@ string freeAssign(string *dest, string src) {
   return *dest;
 }
 
-#ifndef _WIN32
 char *stringToGBK(string str) {
-  char *result = (char *) malloc(sizeof(char) * str->length), *out_buf = result;
-  memset(result, 0, str->length);
+  char *src = str->c_str;
+  return cstrToGBK(src, str->unitCnt);
+}
 
-  size_t in_len = str->length, out_len = str->length;
-  char *in_buf = str->c_str;
+#ifndef _WIN32
+char *cstrToGBK(char *src, size_t len) {
+  char *result = (char *) malloc(sizeof(char) * len), *out_buf = result;
+  memset(result, 0, len);
+
+  size_t in_len = len, out_len = len;
+  char *in_buf = src;
 
   iconv_t cd = iconv_open("GBK", "UTF-8");
   if (cd != (iconv_t) - 1) {
@@ -593,8 +602,8 @@ char *stringToGBK(string str) {
   return result;
 }
 #else
-char *stringToGBK(string str) {
-  char *src = str->c_str, *result = (char *) malloc(sizeof(char) * str->unitCnt);
+char *cstrToGBK(char *src, size_t len) {
+  char *result = NULL;
 
   WCHAR *w_str;
   int i = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
@@ -602,6 +611,7 @@ char *stringToGBK(string str) {
     w_str = (WCHAR *) malloc((size_t) i * sizeof(WCHAR));
     MultiByteToWideChar(CP_UTF8, 0, src, -1, w_str, i);
     i = WideCharToMultiByte(CP_ACP, 0, w_str, -1, NULL, 0, NULL, NULL);
+    result = (char *) malloc(sizeof(char) * (i + 1));
     WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
     result[i] = 0;
     free(w_str);
