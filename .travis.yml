@@ -7,7 +7,11 @@ compiler:
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake .. -DENABLE_COVERAGE=On
 
 script:
   - make && make test
+  - make gcov
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -X gcov

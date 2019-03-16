@@ -1,0 +1,6 @@
+[submodule "externals/CMake-codecov"]
+	path = externals/CMake-codecov
+	url = git://github.com/RWTH-HPC/CMake-codecov.git
+[submodule "externals/unity"]
+	path = externals/unity
+	url = https://github.com/ThrowTheSwitch/Unity.git
