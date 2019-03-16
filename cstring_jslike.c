@@ -237,17 +237,28 @@ string newSizedString(uint64_t size) {
  * @param mem memory allocated on stack
  * @return
  */
-string newLiteralString(char *c, string str) {
-  str->c_str = c;
+string newLiteralString(char *c, string str, bool copy) {
   str->length = strlen(c);
   str->size = str->length;
+
+  if (copy) {
+    str->c_str = (char *) malloc(sizeof(char) * str->length);
+    strcpy(str->c_str, c);
+  } else {
+    str->c_str = c;
+  }
   str->len = length(str);
   return str;
 }
 
 /**
  * Delete a string.
- * @param str The string
+ *
+ * The string **MUST NOT** be created by string literal
+ * WHICH MAY CAUSE **SEGMENTATION FAULT**
+ * (as it's allocated by alloca, and trying to free stack memory causes segmentation fault)
+ *
+ * @param str The string to delete.
  */
 void deleteString(string str) {
   free(str->c_str);

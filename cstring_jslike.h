@@ -10,11 +10,15 @@
 #define CSTRING_JSLIKE_CSTRING_JSLIKE_H
 
 #define $init$ = newEmptyString()
+#define STRING(c) newLiteralString(c, (String*) malloc(sizeof(String)), true)
+#define $STRING(c) deleteString(c)
+
 #ifndef _WIN32
-#define LITERAL(c) newLiteralString(c, (String*) alloca(sizeof(String)))
+#define LITERAL(c) newLiteralString(c, (String*) alloca(sizeof(String)), false)
 #else
-#define LITERAL(c) newLiteralString(c, (String*) _alloca(sizeof(String)))
+#define LITERAL(c) newLiteralString(c, (String*) _alloca(sizeof(String)), false)
 #endif
+#define $LITERAL(c) free(c)
 
 typedef struct String {
   uint64_t length;
@@ -26,7 +30,7 @@ typedef String *string;
 
 string newEmptyString();
 string newSizedString(uint64_t size);
-string newLiteralString(char *c, string str);
+string newLiteralString(char *c, string str, bool copy);
 
 void deleteString(string str);
 string freeAssign(string *dest, string src);
