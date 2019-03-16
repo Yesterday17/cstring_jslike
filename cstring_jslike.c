@@ -279,8 +279,24 @@ string concat2(string a, string b) {
   return ans;
 }
 
+/**
+ * Default behavior of endWith: Use the actual 'end' of src
+ * @param src
+ * @param search
+ * @return
+ */
 bool endsWithD(string src, string search) {
   return endsWith(src, search, src->length);
+}
+
+/**
+ * Default behavior of padEnd: Use ' '(space) to padEnd
+ * @param str
+ * @param length
+ * @return
+ */
+string padEndD(string str, size_t length) {
+  return padEnd(str, length, LITERAL(" "));
 }
 
 //////////////////////////////////////////////////////////////////

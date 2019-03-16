@@ -58,6 +58,7 @@ string padEnd(string str, size_t length, string toPad);
 // Help methods
 string concat2(string a, string b);
 bool endsWithD(string src, string search);
+string padEndD(string str, size_t length);
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
