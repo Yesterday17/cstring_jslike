@@ -39,6 +39,10 @@ string reverseString(string str) {
 
 // TODO: Add reverseStringU method
 
+string cloneString(string str) {
+  return newLiteralString(STR(str), (String *) malloc(sizeof(String)), true);
+}
+
 //////////////////////////////////////////////////////////////////
 /// Methods & prototype methods
 //////////////////////////////////////////////////////////////////
@@ -172,12 +176,43 @@ size_t indexOf(string str, string pattern, size_t from) {
   }
 }
 
+/**
+ * The lastIndexOf() method returns the index within the calling String object of the last occurrence of the specified value, searching backwards from fromIndex.
+ * Returns length if the value is not found.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/lastIndexOf
+ * @param str
+ * @param pattern
+ * @param from
+ * @return
+ */
 size_t lastIndexOf(string str, string pattern, size_t from) {
   string r_str = reverseString(str), r_pattern = reverseString(pattern);
   size_t index = indexOf(r_str, r_pattern, from);
   deleteString(r_str);
   deleteString(r_pattern);
   return str->length - index - 1;
+}
+
+/**
+ * The padEnd() method pads the current string with a given string (repeated, if needed) so that the resulting string reaches a given length.
+ * The padding is applied from the end (right) of the current string.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
+ * @param str
+ * @param length
+ * @param toPad
+ * @return
+ */
+// TODO: Implement padEndU
+string padEnd(string str, size_t length, string toPad) {
+  if (str->length >= length) return cloneString(str);
+  string result = newSizedString(length);
+  memcpy(STR(result), STR(str), str->length);
+
+  for (size_t offset = str->length; offset < length; offset += toPad->length) {
+    memcpy(STR(result) + offset, STR(toPad), offset + toPad->length > length ? offset - toPad->length : toPad->length);
+  }
+
+  return result;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -343,7 +378,7 @@ string newSizedString(size_t size) {
 
   string str = (String *) malloc(sizeof(String));
   str->c_str = (char *) malloc(sizeof(char) * next);
-  memset(str->c_str, '\0', next);
+  memset(str->c_str, '\0', sizeof(char) * next);
 
   str->length = 0;
   str->size = next - 1;

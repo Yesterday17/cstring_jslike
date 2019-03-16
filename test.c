@@ -75,6 +75,9 @@ int main() {
   printf("str6.indexOf('雳') is: %zu\n", indexOf(str6, LITERAL(u8"雳"), 0));
   printf("str6.lastIndexOf('雳') is: %zu\n", lastIndexOf(str6, LITERAL(u8"雳"), 0));
 
+  printf("str6.padEnd(100, '🍻') is: %s\n", STR(padEnd(str6, 100, LITERAL(u8"🍻"))));
+  printf("\n");
+
   /// Delete(free) the string like the following:
   $STRING(str1);
   $STRING(str2);
