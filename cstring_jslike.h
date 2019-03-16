@@ -41,6 +41,7 @@ string freeAssign(string *dest, string src);
 #define STRING_LARGER 1
 #define STRING_SMALLER 2
 uint8_t compareString(string str1, string str2);
+string reverseString(string str);
 
 // Methods & prototype methods
 string fromCharCode(uint64_t count, ...);
@@ -50,6 +51,7 @@ string concat(uint64_t count, ...);
 bool endsWith(string src, string search, size_t length);
 bool includes(string src, string pattern);
 size_t indexOf(string str, string pattern, size_t from);
+size_t lastIndexOf(string str, string pattern, size_t from);
 
 // Help methods
 string concat2(string a, string b);

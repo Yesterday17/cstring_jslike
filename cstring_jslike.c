@@ -16,6 +16,7 @@
 //////////////////////////////////////////////////////////////////
 /// Basic Utilities
 //////////////////////////////////////////////////////////////////
+
 uint8_t compareString(string str1, string str2) {
   if (str1->length != str2->length) return false;
   if (str1->len != str2->len) return false;
@@ -28,6 +29,15 @@ uint8_t compareString(string str1, string str2) {
   }
   return STRING_EQUAL;
 }
+
+string reverseString(string str) {
+  string rev = newSizedString(str->length);
+  strcpy(STR(rev), STR(str));
+  strrev(STR(rev));
+  return rev;
+}
+
+// TODO: Add reverseStringU method
 
 //////////////////////////////////////////////////////////////////
 /// Methods & prototype methods
@@ -160,6 +170,14 @@ size_t indexOf(string str, string pattern, size_t from) {
   } else {
     return str->length;
   }
+}
+
+size_t lastIndexOf(string str, string pattern, size_t from) {
+  string r_str = reverseString(str), r_pattern = reverseString(pattern);
+  size_t index = indexOf(r_str, r_pattern, from);
+  deleteString(r_str);
+  deleteString(r_pattern);
+  return str->length - index - 1;
 }
 
 //////////////////////////////////////////////////////////////////

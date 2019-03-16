@@ -10,14 +10,14 @@ int main() {
   printf("\n");
 
   // String literal
+  /// You don't need to free the LITERAL string
+  // (as it's allocated by alloca method)
+  // and can be released automatically after function call
   string str2 = concat2(str1, LITERAL("2333"));
   printf("str2 is: %s\n", STR(str2));
   printf("\n");
 
   // String concat
-  /// You don't need to free the LITERAL string
-  // (as it's allocated by alloca method)
-  // and can be released automatically after function call
   string str3 = concat(3, str1, LITERAL(" "), str2);
   printf("str3 = str1 + space + str2 is: %s\n", STR(str3));
   printf("\n");
@@ -33,8 +33,6 @@ int main() {
   string str4 = STRING(u8"怎么说");
   printf("str4 is: %s\n", STR(str4));
   printf("str4.charAtU(2) is: %s\n", STR(charAtU(str4, 2)));
-  /// Delete(free) the string like this:
-  $STRING(str4);
   printf("\n");
 
   // ASCII endWith
@@ -64,16 +62,26 @@ int main() {
 
   // UTF-8 character size
   printf("UTF-8 size of the character at str6[3] is: %d\n", ucharSize(str6, 3));
-  $STRING(str6);
   printf("\n");
 
-  // includes, indexOf
+  // includes
   printf("str1.includes('bC') is: %s\n", includes(str1, LITERAL("bC")) ? "true" : "false");
   printf("str1.includes('BC') is: %s\n", includes(str1, LITERAL("BC")) ? "true" : "false");
-  printf("str1.indexOf('BC') is: %zu\n", indexOf(str1, LITERAL("BC"), 0));
+
+  // indexOf, lastIndexOf
   /// Returns the length of searched string if not found
   // (as size_t is unsigned)
-  printf("str1.indexOf('d') is: %zu\n", indexOf(str1, LITERAL("d"), 0));
+  printf("str1.indexOf('BC') is: %zu\n", indexOf(str1, LITERAL("BC"), 0));
+  printf("str6.indexOf('雳') is: %zu\n", indexOf(str6, LITERAL(u8"雳"), 0));
+  printf("str6.lastIndexOf('雳') is: %zu\n", lastIndexOf(str6, LITERAL(u8"雳"), 0));
+
+  /// Delete(free) the string like the following:
+  $STRING(str1);
+  $STRING(str2);
+  $STRING(str3);
+  $STRING(str4);
+  $STRING(str5);
+  $STRING(str6);
 
   return 0;
 }
