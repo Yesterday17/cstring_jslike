@@ -164,16 +164,16 @@ string concat(uint64_t count, ...) {
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
  * @param src
  * @param search
- * @param length
+ * @param len
  * @return
  */
-bool endsWith(string src, string search, size_t length) {
-  if (src->length < length) {
-    length = src->length;
+bool endsWith(string src, string search, size_t len) {
+  if (src->length < len) {
+    len = src->length;
   }
 
   for (int i = 0; i < search->length; i++) {
-    if (charAt(src, length - 1 - i) != charAt(search, search->length - 1 - i)) {
+    if (charAt(src, len - 1 - i) != charAt(search, search->length - 1 - i)) {
       return false;
     }
   }
@@ -231,20 +231,22 @@ size_t lastIndexOf(string str, string pattern, size_t from) {
  * The padding is applied from the end (right) of the current string.
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
  * @param str
- * @param length
+ * @param len
  * @param toPad
  * @return
  */
 // TODO: Implement padEndU
-string padEnd(string str, size_t length, string toPad) {
-  if (str->length >= length) return cloneString(str);
-  string result = newSizedString(length);
+string padEnd(string str, size_t len, string toPad) {
+  if (str->length >= len) return cloneString(str);
+  string result = newSizedString(len);
   memcpy(STR(result), STR(str), str->length);
 
-  for (size_t offset = str->length; offset < length; offset += toPad->length) {
-    memcpy(STR(result) + offset, STR(toPad), offset + toPad->length > length ? offset - toPad->length : toPad->length);
+  for (size_t offset = str->length; offset < len; offset += toPad->length) {
+    memcpy(STR(result) + offset, STR(toPad), offset + toPad->length > len ? offset - toPad->length : toPad->length);
   }
 
+  result->length = len;
+  result->len = length(result);
   return result;
 }
 
@@ -325,11 +327,11 @@ bool endsWithD(string src, string search) {
 /**
  * Default behavior of padEnd: Use ' '(space) to padEnd
  * @param str
- * @param length
+ * @param len
  * @return
  */
-string padEndD(string str, size_t length) {
-  return padEnd(str, length, LITERAL(" "));
+string padEndD(string str, size_t len) {
+  return padEnd(str, len, LITERAL(" "));
 }
 
 //////////////////////////////////////////////////////////////////
@@ -413,7 +415,7 @@ string newSizedString(size_t size) {
 
   string str = (String *) malloc(sizeof(String));
   str->c_str = (char *) malloc(sizeof(char) * next);
-  memset(str->c_str, '\0', sizeof(char) * next);
+  memset(str->c_str, '\0', next);
 
   str->length = 0;
   str->size = next - 1;

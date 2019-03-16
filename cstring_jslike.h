@@ -49,16 +49,16 @@ string fromCharCode(uint64_t count, ...);
 char charAt(string str, size_t index);
 int charCodeAt(string str, size_t index);
 string concat(uint64_t count, ...);
-bool endsWith(string src, string search, size_t length);
+bool endsWith(string src, string search, size_t len);
 bool includes(string src, string pattern);
 size_t indexOf(string str, string pattern, size_t from);
 size_t lastIndexOf(string str, string pattern, size_t from);
-string padEnd(string str, size_t length, string toPad);
+string padEnd(string str, size_t len, string toPad);
 
 // Help methods
 string concat2(string a, string b);
 bool endsWithD(string src, string search);
-string padEndD(string str, size_t length);
+string padEndD(string str, size_t len);
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
