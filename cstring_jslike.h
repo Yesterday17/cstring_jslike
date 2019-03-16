@@ -71,7 +71,7 @@ string charAtU(string str, size_t index);
 bool endsWithU(string src, string search, size_t len);
 
 // UTF-8 help methods
-size_t length(string src);
+size_t length(string str);
 uint8_t ucharSize(string str, size_t offset);
 #define endsWithUD(src, search) endsWithU(src, search, src->len)
 
