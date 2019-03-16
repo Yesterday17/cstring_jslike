@@ -1,3 +1,5 @@
+#define __USE_MINGW_ANSI_STDIO 1
+
 #include <stdio.h>
 #include "cstring_jslike.h"
 
@@ -53,7 +55,7 @@ int main() {
   // UTF-8 string length
   string str6 = STRING(u8"霹雳霹雳🍻");
   printf("str6 is: %s\n", STR(str6));
-  printf("length(str6) is: %llu\n", length(str6));
+  printf("length(str6) is: %zu\n", length(str6));
   printf("\n");
 
   // String To GBK
@@ -64,6 +66,14 @@ int main() {
   printf("UTF-8 size of the character at str6[3] is: %d\n", ucharSize(str6, 3));
   $STRING(str6);
   printf("\n");
+
+  // includes, indexOf
+  printf("str1.includes('bC') is: %s\n", includes(str1, LITERAL("bC")) ? "true" : "false");
+  printf("str1.includes('BC') is: %s\n", includes(str1, LITERAL("BC")) ? "true" : "false");
+  printf("str1.indexOf('BC') is: %zu\n", indexOf(str1, LITERAL("BC"), 0));
+  /// Returns the length of searched string if not found
+  // (as size_t is unsigned)
+  printf("str1.indexOf('d') is: %zu\n", indexOf(str1, LITERAL("d"), 0));
 
   return 0;
 }

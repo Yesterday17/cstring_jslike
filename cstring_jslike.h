@@ -20,8 +20,8 @@
 #endif
 
 typedef struct String {
-  uint64_t length;
-  uint64_t size;
+  size_t length;
+  size_t size;
   size_t len;
   char *c_str;
 } String;
@@ -29,7 +29,7 @@ typedef String *string;
 
 // Create string
 string newEmptyString();
-string newSizedString(uint64_t size);
+string newSizedString(size_t size);
 string newLiteralString(char *c, string str, bool copy);
 
 // Release string
@@ -44,22 +44,24 @@ uint8_t compareString(string str1, string str2);
 
 // Methods & prototype methods
 string fromCharCode(uint64_t count, ...);
-char charAt(string str, uint64_t index);
-int charCodeAt(string str, uint64_t index);
+char charAt(string str, size_t index);
+int charCodeAt(string str, size_t index);
 string concat(uint64_t count, ...);
-bool endsWith(string src, string search, uint64_t length);
+bool endsWith(string src, string search, size_t length);
+bool includes(string src, string pattern);
+size_t indexOf(string str, string pattern, size_t from);
 
 // Help methods
 string concat2(string a, string b);
 bool endsWithT(string src, string search);
 
 // UTF-8 methods
-string charAtU(string str, uint64_t index);
-bool endsWithU(string src, string search, uint64_t len);
+string charAtU(string str, size_t index);
+bool endsWithU(string src, string search, size_t len);
 
 // UTF-8 help methods
 size_t length(string src);
-uint8_t ucharSize(string str, uint64_t offset);
+uint8_t ucharSize(string str, size_t offset);
 bool endsWithTU(string src, string search);
 
 // Help macros

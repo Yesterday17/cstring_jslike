@@ -37,8 +37,8 @@ uint8_t compareString(string str1, string str2) {
  * The fromCharCode() method returns a string created from the specified sequence of ASCII code units.
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode
  * @param count The number of units.
- * @param ... Units.
- * @return A string contains the units.
+ * @param ...
+ * @return
  */
 // TODO: Implement UTF-16 code units.
 string fromCharCode(uint64_t count, ...) {
@@ -64,7 +64,7 @@ string fromCharCode(uint64_t count, ...) {
  * @return A character at index, or 0 on error.
  */
 // TODO: Implement UTF-16 code unit.
-char charAt(string str, uint64_t index) {
+char charAt(string str, size_t index) {
   if (index >= 0 && index <= str->length - 1) {
     return str->c_str[index];
   } else {
@@ -80,7 +80,7 @@ char charAt(string str, uint64_t index) {
  * @return
  */
 // TODO: Implement UTF-16 code unit.
-int charCodeAt(string str, uint64_t index) {
+int charCodeAt(string str, size_t index) {
   return charAt(str, index);
 }
 
@@ -91,11 +91,11 @@ int charCodeAt(string str, uint64_t index) {
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/concat
  * @param count The number of strings to concat.
  * @param ... The strings to concat.
- * @return A new string.
+ * @return
  */
 string concat(uint64_t count, ...) {
   string str = newEmptyString();
-  uint64_t length = 0, len = 0;
+  size_t length = 0, len = 0;
 
   va_list args;
   va_start(args, count);
@@ -120,7 +120,7 @@ string concat(uint64_t count, ...) {
  * @param length
  * @return
  */
-bool endsWith(string src, string search, uint64_t length) {
+bool endsWith(string src, string search, size_t length) {
   if (src->length < length) {
     length = src->length;
   }
@@ -131,6 +131,35 @@ bool endsWith(string src, string search, uint64_t length) {
     }
   }
   return true;
+}
+
+/**
+ * The includes() method determines whether one string may be found within another string, returning true or false as appropriate.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+ * @param src
+ * @param pattern
+ * @return
+ */
+bool includes(string src, string pattern) {
+  return (strstr(STR(src), STR(pattern)) != NULL);
+}
+
+/**
+ * The indexOf() method returns the index within the calling String of the first occurrence of the specified value, starting the search at fromIndex.
+ * Returns its length if the value is not found.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf
+ * @param str
+ * @param pattern
+ * @param from
+ * @return
+ */
+size_t indexOf(string str, string pattern, size_t from) {
+  char *occur = strstr(STR(str) + from, STR(pattern));
+  if (occur != NULL) {
+    return occur - STR(str);
+  } else {
+    return str->length;
+  }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -144,11 +173,11 @@ bool endsWith(string src, string search, uint64_t length) {
  * @param index
  * @return A character at index, or 0 on error.
  */
-string charAtU(string str, uint64_t index) {
+string charAtU(string str, size_t index) {
   string result = newSizedString(5);
-  uint64_t size = ucharSize(str, 0);
+  size_t size = ucharSize(str, 0);
   if (index >= 0 && index < str->len) {
-    uint64_t offset = 0, j;
+    size_t offset = 0, j;
     for (int i = 0; i < index; i++) {
       size = ucharSize(str, offset);
       offset += size;
@@ -171,7 +200,7 @@ string charAtU(string str, uint64_t index) {
  * @param length
  * @return
  */
-bool endsWithU(string src, string search, uint64_t len) {
+bool endsWithU(string src, string search, size_t len) {
   if (src->length < len) {
     len = src->length;
   }
@@ -230,7 +259,7 @@ size_t length(string src) {
  * @param offset
  * @return
  */
-uint8_t ucharSize(string str, uint64_t offset) {
+uint8_t ucharSize(string str, size_t offset) {
   if (offset >= str->length) return 0;
   while (true) {
     unsigned char c = (unsigned char) str->c_str[offset];
@@ -255,7 +284,7 @@ bool endsWithTU(string src, string search) {
 /**
  * https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2
  */
-uint64_t findNext2Exp(uint64_t v) {
+size_t findNext2Exp(size_t v) {
   v--;
   v |= v >> 1;
   v |= v >> 2;
@@ -286,10 +315,10 @@ string newEmptyString() {
  * @param size The size.
  * @return A string with size.
  */
-string newSizedString(uint64_t size) {
+string newSizedString(size_t size) {
   if (size < STRING_START_SIZE) return newEmptyString();
 
-  uint64_t next = findNext2Exp(size);
+  size_t next = findNext2Exp(size);
   if (next == size) {
     next = findNext2Exp(size + 1);
   }
