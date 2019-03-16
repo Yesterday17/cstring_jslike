@@ -279,7 +279,7 @@ string concat2(string a, string b) {
   return ans;
 }
 
-bool endsWithT(string src, string search) {
+bool endsWithD(string src, string search) {
   return endsWith(src, search, src->length);
 }
 
@@ -330,7 +330,7 @@ uint8_t ucharSize(string str, size_t offset) {
   }
 }
 
-bool endsWithTU(string src, string search) {
+bool endsWithUD(string src, string search) {
   return endsWithU(src, search, src->len);
 }
 

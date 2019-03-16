@@ -57,7 +57,7 @@ string padEnd(string str, size_t length, string toPad);
 
 // Help methods
 string concat2(string a, string b);
-bool endsWithT(string src, string search);
+bool endsWithD(string src, string search);
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
@@ -66,7 +66,7 @@ bool endsWithU(string src, string search, size_t len);
 // UTF-8 help methods
 size_t length(string src);
 uint8_t ucharSize(string str, size_t offset);
-bool endsWithTU(string src, string search);
+bool endsWithUD(string src, string search);
 
 // Help macros
 #define STR(str) str->c_str

@@ -36,16 +36,16 @@ int main() {
   printf("\n");
 
   // ASCII endWith
-  printf("str1.endWith('BC') is: %s\n", endsWithT(str1, LITERAL("BC")) ? "true" : "false");
-  printf("str1.endWith('B') is: %s\n", endsWithT(str1, LITERAL("B")) ? "true" : "false");
+  printf("str1.endWith('BC') is: %s\n", endsWithD(str1, LITERAL("BC")) ? "true" : "false");
+  printf("str1.endWith('B') is: %s\n", endsWithD(str1, LITERAL("B")) ? "true" : "false");
   printf("str1.endWith('B', 2) is: %s\n", endsWith(str1, LITERAL("B"), 2) ? "true" : "false");
   printf("\n");
 
   // UTF-8 endWithU
   string str5 = STRING(u8"啊我死了");
   printf("str5 is: %s\n", STR(str5));
-  printf("str5.endWithU('我死了') is: %s\n", endsWithTU(str5, LITERAL(u8"我死了")) ? "true" : "false");
-  printf("str5.endWithU('啊') is: %s\n", endsWithTU(str5, LITERAL(u8"啊")) ? "true" : "false");
+  printf("str5.endWithU('我死了') is: %s\n", endsWithUD(str5, LITERAL(u8"我死了")) ? "true" : "false");
+  printf("str5.endWithU('啊') is: %s\n", endsWithUD(str5, LITERAL(u8"啊")) ? "true" : "false");
   printf("str5.endWithU('我', 1) is: %s\n", endsWithU(str5, LITERAL(u8"我"), 1) ? "true" : "false");
   printf("str5.endWithU('我', 2) is: %s\n", endsWithU(str5, LITERAL(u8"啊我"), 2) ? "true" : "false");
   printf("\n");
