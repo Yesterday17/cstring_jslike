@@ -13,6 +13,26 @@
 
 #define STRING_START_SIZE 16
 
+//////////////////////////////////////////////////////////////////
+/// Basic Utilities
+//////////////////////////////////////////////////////////////////
+uint8_t compareString(string str1, string str2) {
+  if (str1->length != str2->length) return false;
+  if (str1->len != str2->len) return false;
+  for (int i = 0; i < str1->length; i++) {
+    if (STR(str1)[i] > STR(str2)[i]) {
+      return STRING_LARGER;
+    } else if (STR(str1)[i] < STR(str2)[i]) {
+      return STRING_SMALLER;
+    }
+  }
+  return STRING_EQUAL;
+}
+
+//////////////////////////////////////////////////////////////////
+/// Methods & prototype methods
+//////////////////////////////////////////////////////////////////
+
 /**
  * The fromCharCode() method returns a string created from the specified sequence of ASCII code units.
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode
@@ -100,9 +120,7 @@ string concat(uint64_t count, ...) {
  * @param length
  * @return
  */
-// TODO: Make endsWith UTF-8 compatible
 bool endsWith(string src, string search, uint64_t length) {
-  bool match = true;
   if (src->length < length) {
     length = src->length;
   }
@@ -112,9 +130,12 @@ bool endsWith(string src, string search, uint64_t length) {
       return false;
     }
   }
-
   return true;
 }
+
+//////////////////////////////////////////////////////////////////
+/// UTF-8 Methods
+//////////////////////////////////////////////////////////////////
 
 /**
  * The String's charAtU() method returns a string consisting of the UTF-8 code unit located at the specified offset into the UTF-8 string.
@@ -125,25 +146,47 @@ bool endsWith(string src, string search, uint64_t length) {
  */
 string charAtU(string str, uint64_t index) {
   string result = newSizedString(5);
-  uint64_t size = 1;
-  if (index >= 0 && index < length(str)) {
-    int i, j;
-    for (i = 0; i <= index; i++) {
-      unsigned char c = (unsigned char) str->c_str[i];
-      if (c >= 0 && c <= 127) i += 0, size = 1;
-      else if ((c & 0xE0) == 0xC0) i += 1, size = 2;
-      else if ((c & 0xF0) == 0xE0) i += 2, size = 3;
-      else if ((c & 0xF8) == 0xF0) i += 3, size = 4;
+  uint64_t size = ucharSize(str, 0);
+  if (index >= 0 && index < str->len) {
+    uint64_t offset = 0, j;
+    for (int i = 0; i < index; i++) {
+      size = ucharSize(str, offset);
+      offset += size;
     }
-    for (j = 0; j < size; i++, j++) {
-      result->c_str[j] = str->c_str[i];
+    for (j = 0; j < size; offset++, j++) {
+      result->c_str[j] = str->c_str[offset];
     }
-    result->c_str[j] = '\0';
+    result->c_str[offset] = '\0';
     result->length = size;
+    result->len = length(result);
   }
-
   return result;
 }
+
+/**
+ * The endsWithU() method determines whether a string ends with the characters of a specified UTF-8 string, returning true or false as appropriate.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+ * @param src
+ * @param search
+ * @param length
+ * @return
+ */
+bool endsWithU(string src, string search, uint64_t len) {
+  if (src->length < len) {
+    len = src->length;
+  }
+
+  for (int i = 0; i < search->len; i++) {
+    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->len - 1 - i)) != STRING_EQUAL) {
+      return false;
+    }
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////
+/// Help Methods
+//////////////////////////////////////////////////////////////////
 
 string concat2(string a, string b) {
   string ans = newSizedString(a->length + b->length);
@@ -157,6 +200,10 @@ string concat2(string a, string b) {
 bool endsWithT(string src, string search) {
   return endsWith(src, search, src->length);
 }
+
+//////////////////////////////////////////////////////////////////
+/// UTF-8 Help Methods
+//////////////////////////////////////////////////////////////////
 
 /**
  * Calculate the length of a UTF-8 string.
@@ -175,6 +222,34 @@ size_t length(string src) {
     size++;
   }
   return size;
+}
+
+/**
+ * Get the size of UTF-8 character at current offset
+ * @param str
+ * @param offset
+ * @return
+ */
+uint8_t ucharSize(string str, uint64_t offset) {
+  if (offset >= str->length) return 0;
+  while (true) {
+    unsigned char c = (unsigned char) str->c_str[offset];
+    if ((c >> 7) == 0b0) {
+      return 1;
+    } else if (c >> 6 == 0b10) {
+      offset--;
+    } else if (c >> 5 == 0b110) {
+      return 2;
+    } else if (c >> 4 == 0b1110) {
+      return 3;
+    } else if (c >> 3 == 0b11110) {
+      return 4;
+    }
+  }
+}
+
+bool endsWithTU(string src, string search) {
+  return endsWithU(src, search, src->len);
 }
 
 /**
@@ -242,7 +317,7 @@ string newLiteralString(char *c, string str, bool copy) {
   str->size = str->length;
 
   if (copy) {
-    str->c_str = (char *) malloc(sizeof(char) * str->length);
+    str->c_str = (char *) malloc(sizeof(char) * str->length + 1);
     strcpy(str->c_str, c);
   } else {
     str->c_str = c;

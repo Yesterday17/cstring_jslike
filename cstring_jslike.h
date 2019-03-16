@@ -36,6 +36,12 @@ string newLiteralString(char *c, string str, bool copy);
 void deleteString(string str);
 string freeAssign(string *dest, string src);
 
+// Basic utilities
+#define STRING_EQUAL 0
+#define STRING_LARGER 1
+#define STRING_SMALLER 2
+uint8_t compareString(string str1, string str2);
+
 // Methods & prototype methods
 string fromCharCode(uint64_t count, ...);
 char charAt(string str, uint64_t index);
@@ -44,10 +50,17 @@ string concat(uint64_t count, ...);
 bool endsWith(string src, string search, uint64_t length);
 
 // Help methods
-string charAtU(string str, uint64_t index);
 string concat2(string a, string b);
 bool endsWithT(string src, string search);
+
+// UTF-8 methods
+string charAtU(string str, uint64_t index);
+bool endsWithU(string src, string search, uint64_t len);
+
+// UTF-8 help methods
 size_t length(string src);
+uint8_t ucharSize(string str, uint64_t offset);
+bool endsWithTU(string src, string search);
 
 // Help macros
 #define STR(str) str->c_str
