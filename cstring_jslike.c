@@ -34,6 +34,7 @@ size_t findNext2Exp(size_t v) {
 /**
  * https://stackoverflow.com/a/8534275
  */
+// FIXME: Not compatible for UTF-8
 char *strrev(char *str) {
   char *p1, *p2;
   if (!str || !*str)
@@ -63,8 +64,9 @@ uint8_t compareString(string str1, string str2) {
   return STRING_EQUAL;
 }
 
+// FIXME: Not compatible for UTF-8
 stringbuf reverseString(string str) {
-  string rev = newSizedString(str->unitCnt);
+  stringbuf rev = newSizedString(str->unitCnt);
   strcpy(U8_CSTR(rev), U8_CSTR(str));
   strrev(U8_CSTR(rev));
   return rev;
@@ -89,7 +91,7 @@ stringbuf cloneString(string str) {
  */
 // TODO: Implement UTF-16 code units.
 stringbuf fromCharCode(uint64_t count, ...) {
-  string str = newSizedString(count);
+  stringbuf str = newSizedString(count);
 
   va_list args;
   va_start(args, count);
@@ -100,6 +102,7 @@ stringbuf fromCharCode(uint64_t count, ...) {
   va_end(args);
 
   str->unitCnt = count;
+  str->length = length(str);
   return str;
 }
 
@@ -141,21 +144,21 @@ int charCodeAt(string str, size_t index) {
  * @return
  */
 stringbuf concat(uint64_t count, ...) {
-  string str = newEmptyString();
-  size_t length = 0, len = 0;
+  stringbuf str = newEmptyString();
+  size_t unitCnt = 0, length = 0;
 
   va_list args;
   va_start(args, count);
   for (int i = 0; i < count; i++) {
     string str2 = va_arg(args, string);
-    length += str2->unitCnt;
-    len += str2->length;
+    unitCnt += str2->unitCnt;
+    length += str2->length;
     freeAssign(&str, concat2(str, str2));
   }
   va_end(args);
 
-  str->unitCnt = length;
-  str->length = len;
+  str->unitCnt = unitCnt;
+  str->length = length;
   return str;
 }
 
@@ -173,7 +176,7 @@ bool endsWith(string src, string search, size_t len) {
   }
 
   for (int i = 0; i < search->unitCnt; i++) {
-    if (charAt(src, len - 1 - i) != charAt(search, search->unitCnt - 1 - i)) {
+    if (charCodeAt(src, len - 1 - i) != charCodeAt(search, search->unitCnt - 1 - i)) {
       return false;
     }
   }
@@ -219,7 +222,7 @@ size_t indexOf(string str, string pattern, size_t from) {
  * @return
  */
 size_t lastIndexOf(string str, string pattern, size_t from) {
-  string r_str = reverseString(str), r_pattern = reverseString(pattern);
+  stringbuf r_str = reverseString(str), r_pattern = reverseString(pattern);
   size_t index = indexOf(r_str, r_pattern, from);
   deleteString(r_str);
   deleteString(r_pattern);
@@ -238,7 +241,7 @@ size_t lastIndexOf(string str, string pattern, size_t from) {
 // TODO: Implement padEndU
 stringbuf padEnd(string str, size_t len, string toPad) {
   if (str->unitCnt >= len) return cloneString(str);
-  string result = newSizedString(len);
+  stringbuf result = newSizedString(len);
   memcpy(U8_CSTR(result), U8_CSTR(str), str->unitCnt);
 
   for (size_t offset = str->unitCnt; offset < len; offset += toPad->unitCnt) {
@@ -264,7 +267,7 @@ stringbuf padEnd(string str, size_t len, string toPad) {
 // TODO: Implement padStartU
 stringbuf padStart(string str, size_t len, string toPad) {
   if (str->unitCnt >= len) return cloneString(str);
-  string result = newSizedString(len);
+  stringbuf result = newSizedString(len);
   memcpy(U8_CSTR(result) + len - str->unitCnt, U8_CSTR(str), str->unitCnt);
 
   for (size_t offset = 0; offset < len - str->unitCnt; offset += toPad->unitCnt) {
@@ -286,7 +289,7 @@ stringbuf padStart(string str, size_t len, string toPad) {
  * @return
  */
 stringbuf repeat(string str, size_t times) {
-  string result = newSizedString(str->unitCnt * times);
+  stringbuf result = newSizedString(str->unitCnt * times);
   for (size_t i = 0; i < times; i++) {
     memcpy(U8_CSTR(result) + str->unitCnt * i, U8_CSTR(str), str->unitCnt);
   }
@@ -312,11 +315,11 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
   if (beginSlice >= str->unitCnt || endSlice < 0 || beginSlice >= endSlice)
     return newEmptyString();
 
-  size_t len = (size_t) (endSlice - beginSlice);
-  string result = newSizedString(len);
-  memcpy(U8_CSTR(result), U8_CSTR(str) + beginSlice, len);
+  size_t unitCnt = (size_t) (endSlice - beginSlice);
+  stringbuf result = newSizedString(unitCnt);
+  memcpy(U8_CSTR(result), U8_CSTR(str) + beginSlice, unitCnt);
 
-  result->unitCnt = len;
+  result->unitCnt = unitCnt;
   result->length = length(result);
   return result;
 }
@@ -334,7 +337,7 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
  */
  // FIXME: Memory leak problem
  stringbuf charAtU(string str, size_t index) {
-  string result = newSizedString(5);
+  stringbuf result = newSizedString(5);
   size_t size = ucharSize(str, 0);
   if (index < str->length) {
     size_t offset = 0, j;
@@ -378,7 +381,7 @@ bool endsWithU(string src, string search, size_t len) {
 //////////////////////////////////////////////////////////////////
 
 stringbuf concat2(string a, string b) {
-  string ans = newSizedString(a->unitCnt + b->unitCnt);
+  stringbuf ans = newSizedString(a->unitCnt + b->unitCnt);
   memcpy(ans->c_str, a->c_str, a->unitCnt);
   memcpy(ans->c_str + a->unitCnt, b->c_str, b->unitCnt);
 
@@ -482,9 +485,8 @@ bool endsWithUD(string src, string search) {
  * @return An empty string.
  */
 stringbuf newEmptyString() {
-  string str = (String *) malloc(sizeof(String));
-  str->c_str = (char *) malloc(sizeof(char) * STRING_START_SIZE);
-  memset(str->c_str, '\0', STRING_START_SIZE);
+  stringbuf str = (String *) malloc(sizeof(String));
+  str->c_str = (char *) calloc(STRING_START_SIZE, sizeof(char));
 
   str->unitCnt = 0;
   str->bufSize = STRING_START_SIZE - 1;
@@ -505,13 +507,12 @@ stringbuf newSizedString(size_t size) {
     next = findNext2Exp(size + 1);
   }
 
-  string str = (String *) malloc(sizeof(String));
-  str->c_str = (char *) malloc(sizeof(char) * next);
-  memset(str->c_str, '\0', next);
+  stringbuf str = (String *) malloc(sizeof(String));
+  str->c_str = (char *) calloc(next, sizeof(char));
 
   str->unitCnt = 0;
   str->bufSize = next - 1;
-  str->length = length(str);
+  str->length = 0;
   return str;
 }
 
