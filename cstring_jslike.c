@@ -422,46 +422,6 @@ string concat2(string a, string b) {
   return ans;
 }
 
-/**
- * Default behavior of endWith: Use the actual 'end' of src
- * @param src
- * @param search
- * @return
- */
-bool endsWithD(string src, string search) {
-  return endsWith(src, search, src->length);
-}
-
-/**
- * Default behavior of padEnd: Use ' '(space) to padEnd
- * @param str
- * @param len
- * @return
- */
-string padEndD(string str, size_t len) {
-  return padEnd(str, len, LITERAL(" "));
-}
-
-/**
- * Default behavior of padStart: Use ' '(space) to padStart
- * @param str
- * @param len
- * @return
- */
-string padStartD(string str, size_t len) {
-  return padStart(str, len, LITERAL(" "));
-}
-
-/**
- * Default behavior of slice: Use str->length to fill endSlice
- * @param str
- * @param beginSlice
- * @return
- */
-string sliceD(string str, int64_t beginSlice) {
-  return slice(str, beginSlice, str->length);
-}
-
 //////////////////////////////////////////////////////////////////
 /// UTF-8 Help Methods
 //////////////////////////////////////////////////////////////////
@@ -507,10 +467,6 @@ uint8_t ucharSize(string str, size_t offset) {
       return 4;
     }
   }
-}
-
-bool endsWithUD(string src, string search) {
-  return endsWithU(src, search, src->len);
 }
 
 /**

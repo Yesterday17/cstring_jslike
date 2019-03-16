@@ -61,10 +61,10 @@ size_t split(string str, string separator, string **array);
 
 // Help methods
 string concat2(string a, string b);
-bool endsWithD(string src, string search);
-string padEndD(string str, size_t len);
-string padStartD(string str, size_t len);
-string sliceD(string str, int64_t beginSlice);
+#define endsWithD(src, search) endsWith(src, search, src->length)
+#define padEndD(str, len) padEnd(str, len, LITERAL(" "))
+#define padStartD(str, len) padStart(str, len, LITERAL(" "))
+#define sliceD(str, beginSlice) slice(str, beginSlice, str->length)
 
 // UTF-8 methods
 string charAtU(string str, size_t index);
@@ -73,7 +73,7 @@ bool endsWithU(string src, string search, size_t len);
 // UTF-8 help methods
 size_t length(string src);
 uint8_t ucharSize(string str, size_t offset);
-bool endsWithUD(string src, string search);
+#define endsWithUD(src, search) endsWithU(src, search, src->len)
 
 // Help macros
 #define STR(str) str->c_str

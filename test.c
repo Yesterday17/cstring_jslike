@@ -74,10 +74,13 @@ int main() {
   printf("str1.indexOf('BC') is: %zu\n", indexOf(str1, LITERAL("BC"), 0));
   printf("str6.indexOf('雳') is: %zu\n", indexOf(str6, LITERAL(u8"雳"), 0));
   printf("str6.lastIndexOf('雳') is: %zu\n", lastIndexOf(str6, LITERAL(u8"雳"), 0));
+  printf("\n");
 
   // padEnd & padStart
   printf("str6.padEnd(100, 'strPadEnd') is: %s\n", STR(padEnd(str6, 100, LITERAL("strPadEnd"))));
+  printf("str6.padEndD(25) is: %s\n", STR(padEndD(str6, 25)));
   printf("str6.padStart(100, 'strPadStart') is: %s\n", STR(padStart(str6, 100, LITERAL("strPadStart"))));
+  printf("str6.padStartD(25) is: %s\n", STR(padStartD(str6, 25)));
   printf("\n");
 
   // repeat
