@@ -55,6 +55,7 @@ size_t indexOf(string str, string pattern, size_t from);
 size_t lastIndexOf(string str, string pattern, size_t from);
 string padEnd(string str, size_t len, string toPad);
 string padStart(string str, size_t len, string toPad);
+string repeat(string str, size_t times);
 
 // Help methods
 string concat2(string a, string b);

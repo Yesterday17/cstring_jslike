@@ -278,6 +278,23 @@ string padStart(string str, size_t len, string toPad) {
   return result;
 }
 
+/**
+ * The repeat() method constructs and returns a new string which contains the specified number of copies of the string on which it was called, concatenated together.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
+ * @param str
+ * @param times
+ * @return
+ */
+string repeat(string str, size_t times) {
+  string result = newSizedString(str->length * times);
+  for (size_t i = 0; i < times; i++) {
+    memcpy(STR(result) + str->length * i, STR(str), str->length);
+  }
+  result->length = times * str->length;
+  result->len = times * str->len;
+  return result;
+}
+
 //////////////////////////////////////////////////////////////////
 /// UTF-8 Methods
 //////////////////////////////////////////////////////////////////

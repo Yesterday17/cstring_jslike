@@ -80,6 +80,10 @@ int main() {
   printf("str6.padStart(100, 'strPadStart') is: %s\n", STR(padStart(str6, 100, LITERAL("strPadStart"))));
   printf("\n");
 
+  // repeat
+  printf("str6.repeat(10) is: %s\n", STR(repeat(str6, 10)));
+  printf("\n");
+
   /// Delete(free) the string like the following:
   $STRING(str1);
   $STRING(str2);
