@@ -580,13 +580,11 @@ char *stringToGBK(string str) {
   WCHAR *w_str;
   int i = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
   if (i > 0) {
-    w_str = (WCHAR *) malloc((size_t) i * 2);
+    w_str = (WCHAR *) malloc((size_t) i * sizeof(WCHAR));
     MultiByteToWideChar(CP_UTF8, 0, src, -1, w_str, i);
     i = WideCharToMultiByte(CP_ACP, 0, w_str, -1, NULL, 0, NULL, NULL);
-    if (str->length >= i) {
-      WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
-      result[i] = 0;
-    }
+    WideCharToMultiByte(CP_ACP, 0, w_str, -1, result, i, NULL, NULL);
+    result[i] = 0;
     free(w_str);
   }
 
