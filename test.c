@@ -92,13 +92,25 @@ int main() {
   printf("str3.slice(-6) is: %s\n", STR(sliceD(str3, -6)));
   printf("\n");
 
-  /// Delete(free) the string like the following:
+  // split
+  string str7 = STRING("first, second, third, fourth");
+  string *str7_split;
+  size_t str7_split_len = split(str7, LITERAL(", "), &str7_split);
+  printf("str7 is: %s\n", STR(str7));
+  printf("str7.split(', ') is:\n");
+  printf("  len: %zu\n", str7_split_len);
+  for (size_t i = 0; i < str7_split_len; i++)
+    printf("  %zu: %s\n", i + 1, STR(str7_split[i]));
+  printf("\n");
+
+  /// Delete(free) the string like the following ones do:
   $STRING(str1);
   $STRING(str2);
   $STRING(str3);
   $STRING(str4);
   $STRING(str5);
   $STRING(str6);
+  $STRING(str7);
 
   return 0;
 }

@@ -57,6 +57,7 @@ string padEnd(string str, size_t len, string toPad);
 string padStart(string str, size_t len, string toPad);
 string repeat(string str, size_t times);
 string slice(string str, int64_t beginSlice, int64_t endSlice);
+size_t split(string str, string separator, string **array);
 
 // Help methods
 string concat2(string a, string b);

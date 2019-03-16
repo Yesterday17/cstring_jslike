@@ -321,6 +321,43 @@ string slice(string str, int64_t beginSlice, int64_t endSlice) {
   return result;
 }
 
+/**
+ * The split() method splits a String into an array of strings by separating the string into substrings, using a specified separator string to determine where to make each split.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+ * @param str
+ * @param separator
+ * @param array
+ * @return
+ */
+size_t split(string str, string separator, string **array) {
+  size_t count = 1, index_previous = 0, index = 0, i = 0;
+  if (separator->length == 0) {
+    *array = NULL;
+    return 0;
+  }
+  for (index = 0; index = indexOf(str, separator, index) + 1, index < str->length; count++);
+
+  *array = malloc(sizeof(String) * count);
+  for (index = 0; i < count; i++, index_previous = index) {
+    size_t len;
+    if (i != count - 1) {
+      index = indexOf(str, separator, index) + separator->length;
+      len = index - index_previous - separator->length;
+    } else {
+      index = str->length;
+      len = index - index_previous;
+    }
+
+    string s = newSizedString(len);
+    memcpy(STR(s), STR(str) + index_previous, len);
+    s->length = len;
+    s->len = length(s);
+    (*array)[i] = s;
+  }
+
+  return count;
+}
+
 //////////////////////////////////////////////////////////////////
 /// UTF-8 Methods
 //////////////////////////////////////////////////////////////////
