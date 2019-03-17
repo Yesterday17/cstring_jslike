@@ -52,16 +52,20 @@ char *strrev(char *str) {
 //////////////////////////////////////////////////////////////////
 
 uint8_t compareString(string str1, string str2) {
-  if (str1->unitCnt != str2->unitCnt) return false;
-  if (str1->length != str2->length) return false;
-  for (int i = 0; i < str1->unitCnt; i++) {
+  for (int i = 0; i < str1->unitCnt || i < str2->unitCnt; i++) {
     if (U8_CSTR(str1)[i] > U8_CSTR(str2)[i]) {
       return STRING_LARGER;
     } else if (U8_CSTR(str1)[i] < U8_CSTR(str2)[i]) {
       return STRING_SMALLER;
     }
   }
-  return STRING_EQUAL;
+  if (str1->unitCnt == str2->unitCnt) {
+    return STRING_EQUAL;
+  } else if (str1->unitCnt > str2->unitCnt) {
+    return STRING_LARGER;
+  } else {
+    return STRING_SMALLER;
+  }
 }
 
 // FIXME: Not compatible for UTF-8
