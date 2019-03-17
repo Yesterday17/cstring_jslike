@@ -73,6 +73,8 @@ stringbuf reverseString(string str) {
   stringbuf rev = newSizedString(str->unitCnt);
   strcpy(U8_CSTR(rev), U8_CSTR(str));
   strrev(U8_CSTR(rev));
+  rev->unitCnt = str->unitCnt;
+  rev->length = str->length;
   return rev;
 }
 

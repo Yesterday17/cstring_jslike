@@ -36,9 +36,13 @@ void test_compareString() {
 }
 
 void test_reverseString() {
-  TEST_ASSERT(EQ(LITERAL("abcde"), LITERAL("edcba")));
-  TEST_ASSERT(EQ(LITERAL("1919"), LITERAL("9191")));
+  stringbuf str1 = reverseString(LITERAL("edcba"));
+  stringbuf str2 = reverseString(LITERAL("9191"));
+  TEST_ASSERT(EQ(LITERAL("abcde"), str1));
+  TEST_ASSERT(EQ(LITERAL("1919"), str2));
   // TODO: Add test case for UTF-8 string
+  $STR_BUF(str1);
+  $STR_BUF(str2);
 }
 
 void test_cloneString() {
