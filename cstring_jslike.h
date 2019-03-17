@@ -68,10 +68,10 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice);
 
 // Help methods
 stringbuf concat2(string a, string b);
-bool endsWithD(string src, string search);
-stringbuf padEndD(string str, size_t len);
-stringbuf padStartD(string str, size_t len);
-stringbuf sliceD(string str, int64_t beginSlice);
+#define endsWithD(src, search) endsWith(src, search, src->length)
+#define padEndD(str, len) padEnd(str, len, LITERAL(" "))
+#define padStartD(str, len) padStart(str, len, LITERAL(" "))
+#define sliceD(str, beginSlice) slice(str, beginSlice, str->length)
 
 // UTF-8 methods
 #define charAtU(str,index) _charAtU((str), (index), _SIZED_LITERAL(5))
@@ -81,7 +81,7 @@ bool endsWithU(string src, string search, size_t len);
 // UTF-8 help methods
 size_t length(string src);
 uint8_t ucharSize(string str, size_t offset);
-bool endsWithUD(string src, string search);
+#define endsWithUD(src, search) endsWithU(src, search, src->unitCnt)
 
 // Help macros
 #define U8_CSTR(str) str->c_str

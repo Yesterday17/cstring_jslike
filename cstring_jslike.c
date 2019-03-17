@@ -135,7 +135,7 @@ char* _charAt(string str, size_t index, char *buf) {
 // TODO: Implement UTF-16 code unit.
 int charCodeAt(string str, size_t index) {
   if (index <= str->unitCnt - 1) {
-    return str->c_str[index];
+    return U8_CSTR(str)[index];
   } else {
     return 0;
   }
@@ -351,7 +351,7 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
       offset += size;
     }
     for (j = 0; j < size; offset++, j++) {
-      buf->c_str[j] = str->c_str[offset];
+      buf->c_str[j] = U8_CSTR(str)[offset];
     }
     buf->c_str[offset] = '\0';
     buf->unitCnt = size;
@@ -394,46 +394,6 @@ stringbuf concat2(string a, string b) {
   return ans;
 }
 
-/**
- * Default behavior of endWith: Use the actual 'end' of src
- * @param src
- * @param search
- * @return
- */
-bool endsWithD(string src, string search) {
-  return endsWith(src, search, src->unitCnt);
-}
-
-/**
- * Default behavior of padEnd: Use ' '(space) to padEnd
- * @param str
- * @param len
- * @return
- */
-stringbuf padEndD(string str, size_t len) {
-  return padEnd(str, len, LITERAL(" "));
-}
-
-/**
- * Default behavior of padStart: Use ' '(space) to padStart
- * @param str
- * @param len
- * @return
- */
-stringbuf padStartD(string str, size_t len) {
-  return padStart(str, len, LITERAL(" "));
-}
-
-/**
- * Default behavior of slice: Use str->length to fill endSlice
- * @param str
- * @param beginSlice
- * @return
- */
-stringbuf sliceD(string str, int64_t beginSlice) {
-  return slice(str, beginSlice, str->unitCnt);
-}
-
 //////////////////////////////////////////////////////////////////
 /// UTF-8 Help Methods
 //////////////////////////////////////////////////////////////////
@@ -466,7 +426,7 @@ size_t length(string src) {
 uint8_t ucharSize(string str, size_t offset) {
   if (offset >= str->unitCnt) return 0;
   while (true) {
-    unsigned char c = (unsigned char) str->c_str[offset];
+    unsigned char c = (unsigned char) U8_CSTR(str)[offset];
     if ((c >> 7) == 0b0) {
       return 1;
     } else if (c >> 6 == 0b10) {
@@ -479,10 +439,6 @@ uint8_t ucharSize(string str, size_t offset) {
       return 4;
     }
   }
-}
-
-bool endsWithUD(string src, string search) {
-  return endsWithU(src, search, src->length);
 }
 
 /**
@@ -545,7 +501,7 @@ string newLiteralString(char *c, string str, char *buf) {
 
   if (buf != NULL) {
     str->c_str = buf;
-    strcpy(str->c_str, c);
+    strcpy(U8_CSTR(str), c);
   } else {
     str->c_str = c;
   }
@@ -582,7 +538,7 @@ string freeAssign(string *dest, string src) {
 }
 
 char *stringToGBK(string str) {
-  char *src = str->c_str;
+  char *src = U8_CSTR(str);
   return cstrToGBK(src, str->unitCnt, NULL);
 }
 
