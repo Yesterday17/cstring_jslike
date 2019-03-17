@@ -45,8 +45,8 @@ string freeAssign(string *dest, string src);
 // Basic utilities
 #define STRING_EQUAL 0
 #define STRING_LARGER 1
-#define STRING_SMALLER 2
-uint8_t compareString(string str1, string str2);
+#define STRING_SMALLER -1
+int compareString(string str1, string str2);
 stringbuf reverseString(string str);
 stringbuf cloneString(string str);
 

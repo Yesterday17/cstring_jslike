@@ -51,8 +51,8 @@ char *strrev(char *str) {
 /// Basic Utilities
 //////////////////////////////////////////////////////////////////
 
-uint8_t compareString(string str1, string str2) {
-  for (int i = 0; i < str1->unitCnt || i < str2->unitCnt; i++) {
+int compareString(string str1, string str2) {
+  for (int i = 0; i < str1->unitCnt && i < str2->unitCnt; i++) {
     if (U8_CSTR(str1)[i] > U8_CSTR(str2)[i]) {
       return STRING_LARGER;
     } else if (U8_CSTR(str1)[i] < U8_CSTR(str2)[i]) {
