@@ -1,6 +1,6 @@
 if(BUILD_TEST)
     set(unit_tests
-            test_string)
+            test_string_base)
 
     foreach(unit_test ${unit_tests})
         add_executable("${unit_test}" "${unit_test}.c")
