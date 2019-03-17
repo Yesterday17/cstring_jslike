@@ -6,7 +6,8 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/CMake-codecov/cmake" ${CMAKE_MODULE_PATH})
 find_package(codecov)
 
-add_library(cstring_jslike SHARED cstring_jslike.h cstring_jslike.c)
+add_library(cstring_jslike STATIC cstring_jslike.h cstring_jslike.c)
+target_include_directories(cstring_jslike PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 add_executable(cstring_jslike_test test.c)
 target_link_libraries(cstring_jslike_test cstring_jslike)

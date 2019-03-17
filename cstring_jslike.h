@@ -43,9 +43,9 @@ void deleteString(stringbuf str);
 string freeAssign(string *dest, string src);
 
 // Basic utilities
-const int STRING_EQUAL = 0;
-const int STRING_LARGER = 1;
-const int STRING_SMALLER = 2;
+#define STRING_EQUAL 0
+#define STRING_LARGER 1
+#define STRING_SMALLER 2
 uint8_t compareString(string str1, string str2);
 stringbuf reverseString(string str);
 stringbuf cloneString(string str);
