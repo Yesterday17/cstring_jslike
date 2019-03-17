@@ -8,6 +8,7 @@ find_package(codecov)
 
 add_library(cstring_jslike STATIC cstring_jslike.h cstring_jslike.c)
 target_include_directories(cstring_jslike PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+add_coverage(cstring_jslike)
 
 add_executable(cstring_jslike_test test.c)
 target_link_libraries(cstring_jslike_test cstring_jslike)
