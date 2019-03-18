@@ -46,7 +46,7 @@ string freeAssign(string *dest, string src);
 #define STRING_EQUAL 0
 #define STRING_LARGER 1
 #define STRING_SMALLER -1
-int compareString(string str1, string str2);
+int8_t compareString(string str1, string str2);
 stringbuf reverseString(string str);
 stringbuf cloneString(string str);
 
@@ -55,7 +55,7 @@ stringbuf fromCharCode(uint64_t count, ...);
 
 #define charAt(str,index) _charAt((str),(index),ALLOCA(sizeof(char)*3))
 char* _charAt(string str, size_t index, char *buf);
-int charCodeAt(string str, size_t index);
+uint16_t charCodeAt(string str, size_t index);
 stringbuf concat(uint64_t count, ...);
 bool endsWith(string src, string search, size_t len);
 bool includes(string src, string pattern);

@@ -35,7 +35,7 @@ size_t findNext2Exp(size_t v) {
 /// Basic Utilities
 //////////////////////////////////////////////////////////////////
 
-int compareString(string str1, string str2) {
+int8_t compareString(string str1, string str2) {
   for (int i = 0; i < str1->unitCnt && i < str2->unitCnt; i++) {
     if (U8_CSTR(str1)[i] > U8_CSTR(str2)[i]) {
       return STRING_LARGER;
@@ -119,15 +119,13 @@ char* _charAt(string str, size_t index, char *buf) {
  * @return
  */
 // TODO: Implement UTF-16 code unit.
-int charCodeAt(string str, size_t index) {
+uint16_t charCodeAt(string str, size_t index) {
   if (index <= str->unitCnt - 1) {
-    return U8_CSTR(str)[index];
+    return (uint16_t) U8_CSTR(str)[index];
   } else {
     return 0;
   }
 }
-
-// TODO: charPointAt
 
 /**
  * The concat() method concatenates the string arguments to the calling string and returns a new string.
