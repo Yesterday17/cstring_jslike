@@ -42,13 +42,13 @@ int main() {
   printf("str1.endWith('B', 2) is: %s\n", endsWith(str1, LITERAL("B"), 2) ? "true" : "false");
   printf("\n");
 
-  // UTF-8 endWithU
+  // UTF-8 endWith
   stringbuf str5 = STR_BUF("啊我死了");
   printf("str5 is: %s\n", CSTR(str5));
-  printf("str5.endWithU('我死了') is: %s\n", endsWithUD(str5, LITERAL("我死了")) ? "true" : "false");
-  printf("str5.endWithU('啊') is: %s\n", endsWithUD(str5, LITERAL("啊")) ? "true" : "false");
-  printf("str5.endWithU('我', 1) is: %s\n", endsWithU(str5, LITERAL("我"), 1) ? "true" : "false");
-  printf("str5.endWithU('我', 2) is: %s\n", endsWithU(str5, LITERAL("啊我"), 2) ? "true" : "false");
+  printf("str5.endWithU('我死了') is: %s\n", endsWithD(str5, LITERAL("我死了")) ? "true" : "false");
+  printf("str5.endWithU('啊') is: %s\n", endsWithD(str5, LITERAL("啊")) ? "true" : "false");
+  printf("str5.endWithU('我', 1) is: %s\n", endsWith(str5, LITERAL("我"), 1) ? "true" : "false");
+  printf("str5.endWithU('我', 2) is: %s\n", endsWith(str5, LITERAL("啊我"), 2) ? "true" : "false");
   printf("\n");
 
   // UTF-8 string length

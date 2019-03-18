@@ -1,11 +1,7 @@
 //
 // Created by KAAAsS on 2019/3/17.
 //
-#include "unity.h"
-
-#include "../cstring_jslike.h"
-
-#define EQ(a,b) compareString((a), (b)) == STRING_EQUAL
+#include "common.h"
 
 void test_create_string() {
   string test = LITERAL("Test");
