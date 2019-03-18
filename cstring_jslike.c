@@ -31,22 +31,6 @@ size_t findNext2Exp(size_t v) {
   return v;
 }
 
-/**
- * https://stackoverflow.com/a/8534275
- */
-// FIXME: Not compatible for UTF-8
-char *strrev(char *str) {
-  char *p1, *p2;
-  if (!str || !*str)
-    return str;
-  for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2) {
-    *p1 ^= *p2;
-    *p2 ^= *p1;
-    *p1 ^= *p2;
-  }
-  return str;
-}
-
 //////////////////////////////////////////////////////////////////
 /// Basic Utilities
 //////////////////////////////////////////////////////////////////
@@ -68,17 +52,17 @@ int compareString(string str1, string str2) {
   }
 }
 
-// FIXME: Not compatible for UTF-8
 stringbuf reverseString(string str) {
   stringbuf rev = newSizedString(str->unitCnt);
-  strcpy(U8_CSTR(rev), U8_CSTR(str));
-  strrev(U8_CSTR(rev));
+  size_t charSize;
+  for (int i = 0, p = (int) str->unitCnt; i < str->unitCnt; i += charSize) {
+    charSize = ucharSize(str, i);
+    memcpy(U8_CSTR(rev) + (p -= charSize), U8_CSTR(str) + i, charSize);
+  }
   rev->unitCnt = str->unitCnt;
   rev->length = str->length;
   return rev;
 }
-
-// TODO: Add reverseStringU method
 
 stringbuf cloneString(string str) {
   return newLiteralString(U8_CSTR(str), (String *) malloc(sizeof(String)), (char*) malloc(sizeof(str->unitCnt)));
@@ -184,8 +168,8 @@ bool endsWith(string src, string search, size_t len) {
     len = src->unitCnt;
   }
 
-  for (int i = 0; i < search->unitCnt; i++) {
-    if (charCodeAt(src, len - 1 - i) != charCodeAt(search, search->unitCnt - 1 - i)) {
+  for (int i = 0; i < search->length; i++) {
+    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->length - 1 - i)) != STRING_EQUAL) { // FIXME: Low efficiency
       return false;
     }
   }
@@ -360,27 +344,6 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
     buf->length = length(buf);
   }
   return buf;
-}
-
-/**
- * The endsWithU() method determines whether a string ends with the characters of a specified UTF-8 string, returning true or false as appropriate.
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
- * @param src
- * @param search
- * @param length
- * @return
- */
-bool endsWithU(string src, string search, size_t len) {
-  if (src->unitCnt < len) {
-    len = src->unitCnt;
-  }
-
-  for (int i = 0; i < search->length; i++) {
-    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->length - 1 - i)) != STRING_EQUAL) {
-      return false;
-    }
-  }
-  return true;
 }
 
 //////////////////////////////////////////////////////////////////

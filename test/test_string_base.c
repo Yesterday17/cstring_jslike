@@ -38,9 +38,12 @@ void test_compareString() {
 void test_reverseString() {
   stringbuf str1 = reverseString(LITERAL("edcba"));
   stringbuf str2 = reverseString(LITERAL("9191"));
+  stringbuf u8Str1 = reverseString(LITERAL("是就辣是说你")); // 家乡的书写习惯
+  stringbuf u8Str2 = reverseString(LITERAL("辩狡不"));
   TEST_ASSERT(EQ(LITERAL("abcde"), str1));
   TEST_ASSERT(EQ(LITERAL("1919"), str2));
-  // TODO: Add test case for UTF-8 string
+  TEST_ASSERT(EQ(LITERAL("你说是辣就是"), u8Str1));
+  TEST_ASSERT(EQ(LITERAL("不狡辩"), u8Str2));
   $STR_BUF(str1);
   $STR_BUF(str2);
 }

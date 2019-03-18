@@ -76,12 +76,10 @@ stringbuf concat2(string a, string b);
 // UTF-8 methods
 #define charAtU(str,index) _charAtU((str), (index), _SIZED_LITERAL(5))
 string _charAtU(string str, size_t index, stringbuf buf);
-bool endsWithU(string src, string search, size_t len);
 
 // UTF-8 help methods
 size_t length(string src);
 uint8_t ucharSize(string str, size_t offset);
-#define endsWithUD(src, search) endsWithU(src, search, src->unitCnt)
 
 // Help macros
 #define U8_CSTR(str) str->c_str
