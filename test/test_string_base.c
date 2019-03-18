@@ -42,6 +42,8 @@ void test_reverseString() {
   TEST_ASSERT(EQ(LITERAL("不狡辩"), u8Str2));
   $STR_BUF(str1);
   $STR_BUF(str2);
+  $STR_BUF(u8Str1);
+  $STR_BUF(u8Str2);
 }
 
 void test_cloneString() {

@@ -24,8 +24,8 @@ void test_ucharSize() {
   string str = LITERAL("Aα啊🍋");
   TEST_ASSERT_EQUAL_INT(1, ucharSize(str, 0));
   TEST_ASSERT_EQUAL_INT(2, ucharSize(str, 1));
-  TEST_ASSERT_EQUAL_INT(3, ucharSize(str, 2));
-  TEST_ASSERT_EQUAL_INT(4, ucharSize(str, 3));
+  TEST_ASSERT_EQUAL_INT(3, ucharSize(str, 3));
+  TEST_ASSERT_EQUAL_INT(4, ucharSize(str, 6));
 }
 
 int main() {
