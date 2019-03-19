@@ -72,7 +72,7 @@ stringbuf concat2(string a, string b);
 #define endsWithD(src, search) endsWith(src, search, (src)->length)
 #define padEndD(str, len) padEnd(str, len, LITERAL(" "))
 #define padStartD(str, len) padStart(str, len, LITERAL(" "))
-#define sliceD(str, beginSlice) slice(str, beginSlice, (str)->length)
+#define sliceD(str, beginSlice) slice(str, beginSlice, (str)->bufSize)
 
 // UTF-8 methods
 #define charAtU(str, index) _charAtU((str), (index), _SIZED_LITERAL(4))

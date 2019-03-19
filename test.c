@@ -69,8 +69,8 @@ int main() {
   /// Returns the length of searched string if not found
   // (as size_t is unsigned)
   printf("str1.indexOf('BC') is: %zu\n", indexOf(str1, LITERAL("BC"), 0));
-  printf("str6.indexOf('雳') is: %zu\n", indexOf(str6, LITERAL("雳"), 0));
-  printf("str6.lastIndexOf('雳') is: %zu\n", lastIndexOf(str6, LITERAL("雳"), 0));
+  printf("str6.indexOf('%s') is: %zu\n", CSTR(LITERAL("雳")), indexOf(str6, LITERAL("雳"), 0));
+  printf("str6.lastIndexOf('%s') is: %zu\n", CSTR(LITERAL("雳")), lastIndexOf(str6, LITERAL("雳"), 0));
   printf("\n");
 
   // padEnd & padStart
