@@ -509,7 +509,7 @@ char *stringToGBK(string str) {
 char *cstrToGBK(char *src, size_t len, char *buf) {
   char *result = buf, *out_buf;
   if (buf == NULL)
-    result = (char *) malloc(sizeof(char) * len);
+    result = (char *) malloc(sizeof(char) * (len + 1));
   out_buf = result;
   memset(result, 0, len);
 
@@ -522,6 +522,7 @@ char *cstrToGBK(char *src, size_t len, char *buf) {
       iconv_close(cd);
     }
   }
+  *out_buf = '\0';
   return result;
 }
 #else
