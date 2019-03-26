@@ -22,11 +22,11 @@
  */
 size_t findNext2Exp(size_t v) {
   v--;
-  v |= v >> 1;
-  v |= v >> 2;
-  v |= v >> 4;
-  v |= v >> 8;
-  v |= v >> 16;
+  v |= v >> 1u;
+  v |= v >> 2u;
+  v |= v >> 4u;
+  v |= v >> 8u;
+  v |= v >> 16u;
   v++;
   return v;
 }
@@ -55,7 +55,7 @@ int8_t compareString(string str1, string str2) {
 stringbuf reverseString(string str) {
   stringbuf rev = newSizedString(str->unitCnt);
   size_t charSize;
-  for (int i = 0, p = (int) str->unitCnt; i < str->unitCnt; i += charSize) {
+  for (size_t i = 0, p = str->unitCnt; i < str->unitCnt; i += charSize) {
     charSize = ucharSize(str, i);
     memcpy(U8_CSTR(rev) + (p -= charSize), U8_CSTR(str) + i, charSize);
   }
@@ -65,7 +65,7 @@ stringbuf reverseString(string str) {
 }
 
 stringbuf cloneString(string str) {
-  return newLiteralString(U8_CSTR(str), (String *) malloc(sizeof(String)), (char*) malloc(sizeof(str->unitCnt)));
+  return newLiteralString(U8_CSTR(str), (String *) malloc(sizeof(String)), (char *) malloc(sizeof(str->unitCnt)));
 }
 
 //////////////////////////////////////////////////////////////////
@@ -104,10 +104,13 @@ stringbuf fromCharCode(uint64_t count, ...) {
  * @return A char pointer of character(GBK) at index, or NULL on error.
  */
 // TODO: Implement UTF-16 code unit.
-char* _charAt(string str, size_t index, char *buf) {
+char *_charAt(string str, size_t index, char *buf) {
   string ch = charAtU(str, index);
   if (ch == NULL)
     return NULL;
+  else
+    ch->bufSize = 2;
+
   return cstrToGBK(U8_CSTR(ch), 5, buf);
 }
 
@@ -167,7 +170,8 @@ bool endsWith(string src, string search, size_t len) {
   }
 
   for (int i = 0; i < search->length; i++) {
-    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->length - 1 - i)) != STRING_EQUAL) { // FIXME: Low efficiency
+    if (compareString(charAtU(src, len - 1 - i), charAtU(search, search->length - 1 - i))
+        != STRING_EQUAL) { // FIXME: Low efficiency
       return false;
     }
   }
@@ -229,7 +233,6 @@ size_t lastIndexOf(string str, string pattern, size_t from) {
  * @param toPad
  * @return
  */
-// TODO: Implement padEndU
 stringbuf padEnd(string str, size_t len, string toPad) {
   if (str->unitCnt >= len) return cloneString(str);
   stringbuf result = newSizedString(len);
@@ -255,7 +258,6 @@ stringbuf padEnd(string str, size_t len, string toPad) {
  * @param toPad
  * @return
  */
-// TODO: Implement padStartU
 stringbuf padStart(string str, size_t len, string toPad) {
   if (str->unitCnt >= len) return cloneString(str);
   stringbuf result = newSizedString(len);
@@ -297,7 +299,6 @@ stringbuf repeat(string str, size_t times) {
  * @param endSlice
  * @return
  */
-// TODO: Implement sliceU
 stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
   if (beginSlice < 0) beginSlice = str->unitCnt + beginSlice;
   if (beginSlice < 0) beginSlice = 0;
@@ -326,7 +327,7 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
  * @param index
  * @return A character at index, or 0 on error.
  */
- stringbuf _charAtU(string str, size_t index, stringbuf buf) {
+stringbuf _charAtU(string str, size_t index, stringbuf buf) {
   size_t size = ucharSize(str, 0);
   if (index < str->length) {
     size_t offset = 0, j;
@@ -338,6 +339,7 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice) {
       buf->c_str[j] = U8_CSTR(str)[offset];
     }
     buf->c_str[offset] = '\0';
+    buf->bufSize = 4;
     buf->unitCnt = size;
     buf->length = length(buf);
   }
@@ -368,15 +370,8 @@ stringbuf concat2(string a, string b) {
  */
 size_t length(string src) {
   size_t size = 0;
-  for (int i = 0; i < src->unitCnt; i++) {
-    unsigned char c = (unsigned char) src->c_str[i];
-    if (c >= 0 && c <= 127) i += 0;
-    else if ((c & 0xE0) == 0xC0) i += 1;
-    else if ((c & 0xF0) == 0xE0) i += 2;
-    else if ((c & 0xF8) == 0xF0) i += 3;
-    else return 0;
-    size++;
-  }
+  if (src->bufSize != 0)
+    for (size_t i = 0; i < src->unitCnt; i += ucharSize(src, i), size++);
   return size;
 }
 
@@ -390,18 +385,26 @@ uint8_t ucharSize(string str, size_t offset) {
   if (offset >= str->unitCnt) return 0;
   while (true) {
     unsigned char c = (unsigned char) U8_CSTR(str)[offset];
-    if ((c >> 7) == 0b0) {
+    if ((c >> 7u) == 0b0) {
       return 1;
-    } else if (c >> 6 == 0b10) {
+    } else if (c >> 6u == 0b10) {
       offset--;
-    } else if (c >> 5 == 0b110) {
+    } else if (c >> 5u == 0b110) {
       return 2;
-    } else if (c >> 4 == 0b1110) {
+    } else if (c >> 4u == 0b1110) {
       return 3;
-    } else if (c >> 3 == 0b11110) {
+    } else if (c >> 3u == 0b11110) {
       return 4;
+    } else {
+      return 0xffu;
     }
   }
+}
+
+string initString(string str, size_t size) {
+  memset(U8_CSTR(str), '\0', size + 1);
+  str->bufSize = size;
+  return str;
 }
 
 /**
@@ -447,26 +450,26 @@ stringbuf newSizedString(size_t size) {
  */
 stringbuf newString(char *c) {
   size_t bufSize = strlen(c) + 1;
-  return newLiteralString(c, (String *) malloc(sizeof(String)), (char*) malloc(sizeof(char) * bufSize));;
+  return newLiteralString(c, (String *) malloc(sizeof(String)), (char *) malloc(sizeof(char) * bufSize));;
 }
 
 /**
  * Initialize a literal string from c_str
  *
  * <b>Please do not call this function directly</b>
- * @param c The c_str
+ * @param originalString The c_str
  * @param mem memory allocated on stack
  * @return
  */
-string newLiteralString(char *c, string str, char *buf) {
-  str->unitCnt = strlen(c);
+string newLiteralString(char *originalString, string str, char *bufForNewString) {
+  str->unitCnt = strlen(originalString);
   str->bufSize = str->unitCnt;
 
-  if (buf != NULL) {
-    str->c_str = buf;
-    strcpy(U8_CSTR(str), c);
+  if (bufForNewString != NULL) {
+    U8_CSTR(str) = bufForNewString;
+    strcpy(U8_CSTR(str), originalString);
   } else {
-    str->c_str = c;
+    U8_CSTR(str) = originalString;
   }
   str->length = length(str);
   return str;

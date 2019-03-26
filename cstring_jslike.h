@@ -20,8 +20,8 @@
 #endif
 #define STRING(c) newLiteralString(c, (String*) ALLOCA(sizeof(String)), NULL)
 #define LITERAL(c) newLiteralString(u8##c, (String*) ALLOCA(sizeof(String)), NULL)
-#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) ALLOCA(sizeof(String)), (char*) ALLOCA(sizeof(char)*(str)->unitCnt))
-#define _SIZED_LITERAL(size) newLiteralString((char*) ALLOCA(sizeof(char) * (size)), (String*) ALLOCA(sizeof(String)), NULL)
+#define BUILD_STR(str) newLiteralString((str)->c_str, (String*) ALLOCA(sizeof(String)), (char*) ALLOCA(sizeof(char) * (str)->unitCnt))
+#define _SIZED_LITERAL(size) initString(newLiteralString((char*) ALLOCA(sizeof(char) * ((size) + 1)), (String*) ALLOCA(sizeof(String)), NULL), size)
 
 typedef struct String {
   size_t unitCnt;
@@ -33,10 +33,11 @@ typedef String *string;
 typedef string stringbuf;
 
 // Create string
+string initString(string str, size_t size);
 stringbuf newEmptyString();
 stringbuf newSizedString(size_t size);
 stringbuf newString(char *c);
-string newLiteralString(char *c, string str, char *buf);
+string newLiteralString(char *originalString, string str, char *bufForNewString);
 
 // Release string
 void deleteString(stringbuf str);
@@ -45,7 +46,7 @@ string freeAssign(string *dest, string src);
 // Basic utilities
 #define STRING_EQUAL 0
 #define STRING_LARGER 1
-#define STRING_SMALLER -1
+#define STRING_SMALLER (-1)
 int8_t compareString(string str1, string str2);
 stringbuf reverseString(string str);
 stringbuf cloneString(string str);
@@ -53,8 +54,8 @@ stringbuf cloneString(string str);
 // Methods & prototype methods
 stringbuf fromCharCode(uint64_t count, ...);
 
-#define charAt(str,index) _charAt((str),(index),ALLOCA(sizeof(char)*3))
-char* _charAt(string str, size_t index, char *buf);
+#define charAt(str, index) _charAt((str), (index), ALLOCA(sizeof(char) * 3))
+char *_charAt(string str, size_t index, char *buf);
 uint16_t charCodeAt(string str, size_t index);
 stringbuf concat(uint64_t count, ...);
 bool endsWith(string src, string search, size_t len);
@@ -68,14 +69,28 @@ stringbuf slice(string str, int64_t beginSlice, int64_t endSlice);
 
 // Help methods
 stringbuf concat2(string a, string b);
-#define endsWithD(src, search) endsWith(src, search, src->length)
+#define endsWithD(src, search) endsWith(src, search, (src)->length)
 #define padEndD(str, len) padEnd(str, len, LITERAL(" "))
 #define padStartD(str, len) padStart(str, len, LITERAL(" "))
-#define sliceD(str, beginSlice) slice(str, beginSlice, str->length)
+#define sliceD(str, beginSlice) slice(str, beginSlice, (str)->bufSize)
 
 // UTF-8 methods
-#define charAtU(str,index) _charAtU((str), (index), _SIZED_LITERAL(5))
+#define charAtU(str, index) _charAtU((str), (index), _SIZED_LITERAL(4))
 string _charAtU(string str, size_t index, stringbuf buf);
+#define concatU concat
+#define endsWithU endsWith
+#define includesU includes
+// TODO: indexOfU
+// #define indexOfU indexOf
+// TODO: lastIndexOfU
+// #define lastIndexOfU lastIndexOf
+// TODO: padEndU
+// #define padEndU padEnd
+// TODO: padStartU
+// #define padStartU padStart
+#define repeatU repeat
+// TODO: sliceU
+// #define sliceU slice
 
 // UTF-8 help methods
 size_t length(string src);

@@ -34,12 +34,14 @@ void test_compareString() {
 void test_reverseString() {
   stringbuf str1 = reverseString(LITERAL("edcba"));
   stringbuf str2 = reverseString(LITERAL("9191"));
-  stringbuf u8Str1 = reverseString(LITERAL("是就辣是说你")); // 家乡的书写习惯
+  stringbuf u8Str1 = reverseString(LITERAL("是就辣是说你")); // 家乡的书写习惯 // <-- 草
   stringbuf u8Str2 = reverseString(LITERAL("辩狡不"));
+  stringbuf u8Str3 = reverseString(LITERAL("上海自来水来自海上"));
   TEST_ASSERT(EQ(LITERAL("abcde"), str1));
   TEST_ASSERT(EQ(LITERAL("1919"), str2));
   TEST_ASSERT(EQ(LITERAL("你说是辣就是"), u8Str1));
   TEST_ASSERT(EQ(LITERAL("不狡辩"), u8Str2));
+  TEST_ASSERT(EQ(LITERAL("上海自来水来自海上"), u8Str3));
   $STR_BUF(str1);
   $STR_BUF(str2);
   $STR_BUF(u8Str1);

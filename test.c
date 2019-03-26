@@ -45,20 +45,16 @@ int main() {
   // UTF-8 endWith
   stringbuf str5 = STR_BUF("啊我死了");
   printf("str5 is: %s\n", CSTR(str5));
-  printf("str5.endWithU('我死了') is: %s\n", endsWithD(str5, LITERAL("我死了")) ? "true" : "false");
-  printf("str5.endWithU('啊') is: %s\n", endsWithD(str5, LITERAL("啊")) ? "true" : "false");
-  printf("str5.endWithU('我', 1) is: %s\n", endsWith(str5, LITERAL("我"), 1) ? "true" : "false");
-  printf("str5.endWithU('我', 2) is: %s\n", endsWith(str5, LITERAL("啊我"), 2) ? "true" : "false");
+  printf("str5.endWithU('%s') is: %s\n", CSTR(LITERAL("我死了")), endsWithD(str5, LITERAL("我死了")) ? "true" : "false");
+  printf("str5.endWithU('%s') is: %s\n", CSTR(LITERAL("啊")), endsWithD(str5, LITERAL("啊")) ? "true" : "false");
+  printf("str5.endWithU('%s', 1) is: %s\n", CSTR(LITERAL("我")), endsWith(str5, LITERAL("我"), 1) ? "true" : "false");
+  printf("str5.endWithU('%s', 2) is: %s\n", CSTR(LITERAL("我")), endsWith(str5, LITERAL("啊我"), 2) ? "true" : "false");
   printf("\n");
 
   // UTF-8 string length
   stringbuf str6 = STR_BUF("霹雳霹雳🍻");
   printf("str6 is: %s, u8 str6 is: %s\n", CSTR(str6), U8_CSTR(str6));
   printf("length(str6) is: %zu\n", length(str6));
-  printf("\n");
-
-  // String To GBK
-  printf("str6 in GBK is: %s\n", CSTR(str6));
   printf("\n");
 
   // UTF-8 character size
@@ -73,8 +69,8 @@ int main() {
   /// Returns the length of searched string if not found
   // (as size_t is unsigned)
   printf("str1.indexOf('BC') is: %zu\n", indexOf(str1, LITERAL("BC"), 0));
-  printf("str6.indexOf('雳') is: %zu\n", indexOf(str6, LITERAL("雳"), 0));
-  printf("str6.lastIndexOf('雳') is: %zu\n", lastIndexOf(str6, LITERAL("雳"), 0));
+  printf("str6.indexOf('%s') is: %zu\n", CSTR(LITERAL("雳")), indexOf(str6, LITERAL("雳"), 0));
+  printf("str6.lastIndexOf('%s') is: %zu\n", CSTR(LITERAL("雳")), lastIndexOf(str6, LITERAL("雳"), 0));
   printf("\n");
 
   // padEnd & padStart
