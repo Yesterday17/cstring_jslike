@@ -65,7 +65,7 @@ stringbuf reverseString(string str) {
 }
 
 stringbuf cloneString(string str) {
-  return newLiteralString(U8_CSTR(str), (String *) malloc(sizeof(String)), (char *) malloc(sizeof(str->unitCnt)));
+  return newLiteralString(U8_CSTR(str), (String *) malloc(sizeof(String)), (char *) malloc(sizeof(char) * (str->unitCnt + 1)));
 }
 
 //////////////////////////////////////////////////////////////////
