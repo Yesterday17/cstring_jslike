@@ -356,6 +356,7 @@ stringbuf concat2(string a, string b) {
   memcpy(ans->c_str + a->unitCnt, b->c_str, b->unitCnt);
 
   ans->unitCnt = a->unitCnt + b->unitCnt;
+  ans->length = a->length + b->length;
   return ans;
 }
 
@@ -450,7 +451,7 @@ stringbuf newSizedString(size_t size) {
  */
 stringbuf newString(char *c) {
   size_t bufSize = strlen(c) + 1;
-  return newLiteralString(c, (String *) malloc(sizeof(String)), (char *) malloc(sizeof(char) * bufSize));;
+  return newLiteralString(c, (String *) malloc(sizeof(String)), (char *) malloc(sizeof(char) * bufSize));
 }
 
 /**
